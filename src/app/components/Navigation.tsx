@@ -21,6 +21,9 @@ export default function Navigation() {
           <Link href="/table" className={`px-4 py-2 rounded hover:bg-white transition-colors ${isActive('/table')}`}>
             Table
           </Link>
+          <Link href="/pie-chart" className={`px-4 py-2 rounded hover:bg-white transition-colors ${isActive('/pie-chart')}`}>
+            Pie Chart
+          </Link>
           <Link href="/map" className={`px-4 py-2 rounded hover:bg-white transition-colors ${isActive('/map')}`}>
             Map
           </Link>
