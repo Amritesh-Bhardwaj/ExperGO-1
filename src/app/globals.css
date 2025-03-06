@@ -17,3 +17,35 @@
 .animate-fadeOut {
   animation: fadeOut 0.1s ease-out forwards;
 }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+}
+
+tr:hover {
+  background-color: #f5f5f5;
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.pl-8 {
+  padding-left: 2rem;
+}
+
+.pl-16 {
+  padding-left: 4rem;
+}
