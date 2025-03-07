@@ -12,11 +12,10 @@ import {
 } from "chart.js";
 import IndiaMap from "./IndiaMap";
 import tableData from "@/app/data/tableData.json";
+import KpiCard from "@/app/components/KpiCard";
 
-// Register Chart.js components
 ChartJS.register(BarElement, CategoryScale, LinearScale, ChartTooltip, Legend);
 
-// Define the type for tableData.json
 interface Branch {
   id: string;
   name: string;
@@ -130,13 +129,13 @@ export default function MapPage() {
 
   return (
     <div
-      className="container mx-auto p-6 flex h-screen"
-      style={{ overflow: "hidden" }} // Prevent scrolling at the container level
+      className="container mx-auto flex h-screen"
+      style={{ padding: "0", overflow: "hidden" }} // Remove padding to use full height
     >
       {/* Left Section (Map) - 60% */}
       <div className="w-3/5 pr-4 flex flex-col h-full">
-        <h2 className="text-2xl font-bold mb-4">India Map</h2>
-        <div className="bg-white rounded-lg p-4 flex-1 overflow-hidden">
+        <h2 className="text-2xl font-bold mb-2">India Map</h2> {/* Reduced margin */}
+        <div className="bg-white rounded-lg p-2 flex-1 overflow-hidden"> {/* Reduced padding */}
           <IndiaMap setSelectedState={setSelectedState} />
         </div>
       </div>
@@ -144,18 +143,36 @@ export default function MapPage() {
       {/* Right Section - 40% */}
       <div className="w-2/5 pl-4 flex flex-col h-full">
         {/* Top Section (KPIs) - 50% */}
-        <div className="bg-white rounded-lg p-4 mb-4 flex-1 overflow-hidden">
-          <h2 className="text-2xl font-bold mb-4">Key Metrics</h2>
-          <div className="space-y-4 h-full overflow-hidden">
-            <p>FTR: {(mapData?.ftr ?? grandTotals.ftr).toFixed(2)}</p>
-            <p>Approval Rate: {((mapData?.approvalRate ?? grandTotals.approvalRate) * 100).toFixed(2)}%</p>
-            <p>Login Count: {mapData?.loginCount ?? grandTotals.loginCount}</p>
+        <div className="bg-white rounded-lg p-2 mb-2 flex-1 overflow-hidden"> {/* Reduced padding and margin */}
+          <h2 className="text-2xl font-bold mb-2">Key Metrics</h2> {/* Reduced margin */}
+          <div className="flex justify-between items-center gap-2 h-full overflow-hidden"> {/* Reduced gap */}
+            <KpiCard
+              title="FTR"
+              value={(mapData?.ftr ?? grandTotals.ftr).toFixed(2)}
+              change={0} // No historical data available for change
+              unit=""
+              isExpandable={false}
+            />
+            <KpiCard
+              title="Approval Rate"
+              value={((mapData?.approvalRate ?? grandTotals.approvalRate) * 100).toFixed(2)}
+              change={0} // No historical data available for change
+              unit="%"
+              isExpandable={false}
+            />
+            <KpiCard
+              title="Login Count"
+              value={mapData?.loginCount ?? grandTotals.loginCount}
+              change={0} // No historical data available for change
+              unit=""
+              isExpandable={false}
+            />
           </div>
         </div>
 
         {/* Bottom Section (Bar Graph) - 50% */}
-        <div className="bg-white rounded-lg p-4 flex-1 overflow-hidden">
-          <h2 className="text-2xl font-bold mb-4">Disbursement & Sanction</h2>
+        <div className="bg-white rounded-lg p-2 flex-1 overflow-hidden"> {/* Reduced padding */}
+          <h2 className="text-2xl font-bold mb-2">Disbursement & Sanction</h2> {/* Reduced margin */}
           <div className="h-full">
             <Bar data={barChartData} options={barChartOptions} />
           </div>
