@@ -39,6 +39,7 @@ export interface Region {
   cancellation: number;
   wip: number;
   branches: Branch[];
+  isBranch?: boolean; // Added to indicate if this is a promoted branch
 }
 
 export interface State {
@@ -59,6 +60,7 @@ export interface State {
   wip: number;
   regions: Region[];
   originalStateName?: string; // Added to track the original state for color purposes
+  isBranch?: boolean; // Added to indicate if this is a promoted branch
 }
 
 export interface TableData {
@@ -214,14 +216,16 @@ const TableComponent = ({
                       : getLighterColor(getStateColor(state).bg, 0)
                   )
                 }
-                onClick={() => toggleState(state.id)}
+                onClick={() => !state.isBranch && toggleState(state.id)} // Only toggle if not a branch
               >
                 <td className="py-2 px-4 border-b flex items-center">
                   {state.name}{" "}
-                  {expandedStates.has(state.id) ? (
-                    <ChevronDown className="ml-2 h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="ml-2 h-4 w-4" />
+                  {!state.isBranch && state.regions && state.regions.length > 0 && ( // Only show chevron if not a branch and has regions
+                    expandedStates.has(state.id) ? (
+                      <ChevronDown className="ml-2 h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="ml-2 h-4 w-4" />
+                    )
                   )}
                 </td>
                 <td className="py-2 px-4 border-b">{state.openingStock}</td>
@@ -253,14 +257,16 @@ const TableComponent = ({
                           getLighterColor(getStateColor(state).bg, 1)
                         )
                       }
-                      onClick={() => toggleRegion(region.id)}
+                      onClick={() => !region.isBranch && toggleRegion(region.id)} // Only toggle if not a branch
                     >
                       <td className="py-2 px-4 border-b pl-8 flex items-center">
                         {region.name}{" "}
-                        {expandedRegions.has(region.id) ? (
-                          <ChevronDown className="ml-2 h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="ml-2 h-4 w-4" />
+                        {!region.isBranch && region.branches && region.branches.length > 0 && ( // Only show chevron if not a branch and has branches
+                          expandedRegions.has(region.id) ? (
+                            <ChevronDown className="ml-2 h-4 w-4" />
+                          ) : (
+                            <ChevronRight className="ml-2 h-4 w-4" />
+                          )
                         )}
                       </td>
                       <td className="py-2 px-4 border-b">{region.openingStock}</td>
@@ -309,8 +315,7 @@ const TableComponent = ({
                   </React.Fragment>
                 ))}
             </React.Fragment>
-          ))
-        }
+          ))}
         </tbody>
       </table>
     </div>
