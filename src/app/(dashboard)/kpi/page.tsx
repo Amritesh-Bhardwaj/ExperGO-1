@@ -48,21 +48,25 @@ export default function KpiPage() {
         {/* Left Section (75%): Horizontal Boxes */}
         <div className="w-full lg:w-3/4 flex flex-col gap-6">
           {/* 1st Horizontal Box: Opening Stock, Application Login */}
-          <div className="bg-gray-100 rounded-lg p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-[rgba(255,206,86,0.6)] rounded-lg p-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {getKpisByTitles(["Opening Stock", "Application Login"]).map((kpi, index) => (
-                <KpiCard
-                  key={index}
-                  title={kpi.title}
-                  value={kpi.value}
-                  change={kpi.change}
-                />
+                <div key={index} className={index < 2 ? "col-span-1" : "col-span-0"}>
+                  <KpiCard
+                    title={kpi.title}
+                    value={kpi.value}
+                    change={kpi.change}
+                  />
+                </div>
               ))}
+              {/* Empty columns to maintain alignment with 4-column grid */}
+              <div className="col-span-1 hidden md:block"></div>
+              <div className="col-span-1 hidden md:block"></div>
             </div>
           </div>
 
           {/* 2nd Horizontal Box: Sanction Count, Sanction Amount, PNI Count, PNI Amount */}
-          <div className="bg-gray-100 rounded-lg p-4">
+          <div className="bg-[rgba(75,192,192,0.6)] rounded-lg p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {getKpisByTitles([
                 "Sanction Count",
@@ -81,21 +85,25 @@ export default function KpiPage() {
           </div>
 
           {/* 3rd Horizontal Box: Rejection Count, Cancellation Count */}
-          <div className="bg-gray-100 rounded-lg p-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-[rgba(255,159,64,0.6)] rounded-lg p-4">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {getKpisByTitles(["Rejection Count", "Cancellation Count"]).map((kpi, index) => (
-                <KpiCard
-                  key={index}
-                  title={kpi.title}
-                  value={kpi.value}
-                  change={kpi.change}
-                />
+                <div key={index} className={index < 2 ? "col-span-1" : "col-span-0"}>
+                  <KpiCard
+                    title={kpi.title}
+                    value={kpi.value}
+                    change={kpi.change}
+                  />
+                </div>
               ))}
+              {/* Empty columns to maintain alignment with 4-column grid */}
+              <div className="col-span-1 hidden md:block"></div>
+              <div className="col-span-1 hidden md:block"></div>
             </div>
           </div>
 
           {/* 4th Horizontal Box: DI Count, DI Value, DA Count, DA Value */}
-          <div className="bg-gray-100 rounded-lg p-4">
+          <div className="bg-[rgba(54,162,235,0.6)] rounded-lg p-4">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
               {getKpisByTitles(["DI Count", "DI Value", "DA Count", "DA Value"]).map((kpi, index) => (
                 <KpiCard
@@ -109,7 +117,7 @@ export default function KpiPage() {
           </div>
 
           {/* 5th Horizontal Box: WIP (Expandable) */}
-          <div className="bg-gray-100 rounded-lg p-4">
+          <div className="bg-[rgba(153,102,255,0.6)] rounded-lg p-4">
             <KpiCard
               title="WIP"
               value="1118.00"
