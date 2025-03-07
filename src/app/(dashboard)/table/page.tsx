@@ -71,7 +71,7 @@ export default function TablePage() {
   // Handle state selection
   const handleStateChange = (stateId: string) => {
     setSelectedState(stateId);
-    // If a region is selected and doesn't belong to the new state, reset it
+    // Reset region and branch if they don't belong to the new state
     if (selectedRegion) {
       const region = allRegions.find((r) => r.id === selectedRegion);
       if (region && region.stateId !== stateId) {
@@ -79,7 +79,6 @@ export default function TablePage() {
         setSelectedBranch("");
       }
     }
-    // If a branch is selected and doesn't belong to the new state, reset it
     if (selectedBranch) {
       const branch = allBranches.find((b) => b.id === selectedBranch);
       if (branch && branch.stateId !== stateId) {
@@ -101,7 +100,7 @@ export default function TablePage() {
       // Clear state only if no branch is selected
       setSelectedState("");
     }
-    // If a branch is selected and doesn't belong to the new region, reset it
+    // Reset branch if it doesn't belong to the new region
     if (selectedBranch) {
       const branch = allBranches.find((b) => b.id === selectedBranch);
       if (branch && branch.regionId !== regionId) {
@@ -150,33 +149,88 @@ export default function TablePage() {
 
   // Filter the data based on selected state, region, and branch
   const filteredData: TableData = useMemo(() => {
-    let filtered = tableData.tableData;
+    // Case 1: If a branch is selected, show only that branch as a top-level row
+    if (selectedBranch) {
+      const branchInfo = allBranches.find((b) => b.id === selectedBranch);
+      if (branchInfo) {
+        const state = tableData.tableData.find((s) => s.id === branchInfo.stateId);
+        const region = state?.regions.find((r) => r.id === branchInfo.regionId);
+        const selectedBranchData = region?.branches.find((b) => b.id === selectedBranch);
+        if (state && region && selectedBranchData) {
+          // Create a fake state with the branch promoted to the top level
+          const fakeState: State = {
+            ...state,
+            id: selectedBranchData.id,
+            name: selectedBranchData.name, // Show branch name as top-level row
+            regions: [], // No regions, since this is a branch
+            openingStock: selectedBranchData.openingStock,
+            applicationLogin: selectedBranchData.applicationLogin,
+            sanctionCount: selectedBranchData.sanctionCount,
+            sanctionAmt: selectedBranchData.sanctionAmt,
+            pniSanctionCount: selectedBranchData.pniSanctionCount,
+            pniSanctionAmount: selectedBranchData.pniSanctionAmount,
+            freshDisbCount: selectedBranchData.freshDisbCount,
+            freshDisbAmt: selectedBranchData.freshDisbAmt,
+            totalDisbAmt: selectedBranchData.totalDisbAmt,
+            diAmt: selectedBranchData.diAmt,
+            rejection: selectedBranchData.rejection,
+            cancellation: selectedBranchData.cancellation,
+            wip: selectedBranchData.wip,
+            // Add the original state name to preserve color mapping
+            originalStateName: state.name,
+          };
+          return { tableData: [fakeState] };
+        }
+      }
+      return { tableData: [] };
+    }
 
-    // Filter by state
+    // Case 2: If a region is selected (but no branch), show only that region as a top-level row
+    if (selectedRegion) {
+      const regionInfo = allRegions.find((r) => r.id === selectedRegion);
+      if (regionInfo) {
+        const state = tableData.tableData.find((s) => s.id === regionInfo.stateId);
+        const selectedRegionData = state?.regions.find((r) => r.id === selectedRegion);
+        if (state && selectedRegionData) {
+          // Create a fake state with the region promoted to the top level
+          const fakeState: State = {
+            ...state,
+            id: selectedRegionData.id,
+            name: selectedRegionData.name, // Show region name as top-level row
+            regions: selectedRegionData.branches.map((branch) => ({
+              ...branch,
+              branches: [], // Ensure no further nesting
+            })), // Directly use branches as regions
+            openingStock: selectedRegionData.openingStock,
+            applicationLogin: selectedRegionData.applicationLogin,
+            sanctionCount: selectedRegionData.sanctionCount,
+            sanctionAmt: selectedRegionData.sanctionAmt,
+            pniSanctionCount: selectedRegionData.pniSanctionCount,
+            pniSanctionAmount: selectedRegionData.pniSanctionAmount,
+            freshDisbCount: selectedRegionData.freshDisbCount,
+            freshDisbAmt: selectedRegionData.freshDisbAmt,
+            totalDisbAmt: selectedRegionData.totalDisbAmt,
+            diAmt: selectedRegionData.diAmt,
+            rejection: selectedRegionData.rejection,
+            cancellation: selectedRegionData.cancellation,
+            wip: selectedRegionData.wip,
+            // Add the original state name to preserve color mapping
+            originalStateName: state.name,
+          };
+          return { tableData: [fakeState] };
+        }
+      }
+      return { tableData: [] };
+    }
+
+    // Case 3: If a state is selected (but no region or branch), show the state with all its regions
     if (selectedState) {
-      filtered = filtered.filter((state) => state.id === selectedState);
+      const filtered = tableData.tableData.filter((state) => state.id === selectedState);
+      return { tableData: filtered };
     }
 
-    // Filter regions within the filtered states
-    if (selectedRegion && filtered.length > 0) {
-      filtered = filtered.map((state) => ({
-        ...state,
-        regions: state.regions.filter((region) => region.id === selectedRegion),
-      })).filter((state) => state.regions.length > 0);
-    }
-
-    // Filter branches within the filtered regions
-    if (selectedBranch && filtered.length > 0) {
-      filtered = filtered.map((state) => ({
-        ...state,
-        regions: state.regions.map((region) => ({
-          ...region,
-          branches: region.branches.filter((branch) => branch.id === selectedBranch),
-        })).filter((region) => region.branches.length > 0),
-      })).filter((state) => state.regions.length > 0);
-    }
-
-    return { tableData: filtered };
+    // Case 4: If nothing is selected, show all data
+    return { tableData: tableData.tableData };
   }, [selectedState, selectedRegion, selectedBranch]);
 
   // Determine if the clear button should be visible

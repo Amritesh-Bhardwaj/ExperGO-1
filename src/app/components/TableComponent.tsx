@@ -58,6 +58,7 @@ export interface State {
   cancellation: number;
   wip: number;
   regions: Region[];
+  originalStateName?: string; // Added to track the original state for color purposes
 }
 
 export interface TableData {
@@ -85,7 +86,6 @@ const TableComponent = ({
         const newSet = new Set(prev);
         if (newSet.has(stateId)) {
           newSet.delete(stateId);
-          // Reset regions when collapsing a state
           data.tableData
             .find((state) => state.id === stateId)
             ?.regions.forEach((region) => newSet.delete(region.id));
@@ -113,6 +113,63 @@ const TableComponent = ({
     [setExpandedRegions]
   );
 
+  // Color mappings for states
+  const stateColorMap: { [key: string]: { bg: string; hover: string } } = {
+    Delhi: {
+      bg: "rgba(255, 99, 132, 0.6)",
+      hover: "rgba(255, 99, 132, 0.7)",
+    },
+    Gujarat: {
+      bg: "rgba(54, 162, 235, 0.6)",
+      hover: "rgba(54, 162, 235, 0.7)",
+    },
+    Haryana: {
+      bg: "rgba(255, 206, 86, 0.6)",
+      hover: "rgba(255, 206, 86, 0.7)",
+    },
+    Maharashtra: {
+      bg: "rgba(75, 192, 192, 0.6)",
+      hover: "rgba(75, 192, 192, 0.7)",
+    },
+    "Madhya Pradesh": {
+      bg: "rgba(153, 102, 255, 0.6)",
+      hover: "rgba(153, 102, 255, 0.7)",
+    },
+    Rajasthan: {
+      bg: "rgba(255, 159, 64, 0.6)",
+      hover: "rgba(255, 159, 64, 0.7)",
+    },
+    "Uttar Pradesh": {
+      bg: "rgba(199, 199, 199, 0.6)",
+      hover: "rgba(199, 199, 199, 0.7)",
+    },
+  };
+
+  // Function to get a lighter version of a color by reducing alpha
+  const getLighterColor = (color: string, level: number) => {
+    const [, r, g, b, a] = color.match(/rgba\((\d+), (\d+), (\d+), ([\d.]+)\)/) || [];
+    const newAlpha = Math.max(0, parseFloat(a) - 0.2 * level); // Reduce alpha by 0.2 per level
+    return `rgba(${r}, ${g}, ${b}, ${newAlpha.toFixed(1)})`;
+  };
+
+  // Function to get hover color (darker by increasing alpha)
+  const getHoverColor = (color: string) => {
+    const [, r, g, b, a] = color.match(/rgba\((\d+), (\d+), (\d+), ([\d.]+)\)/) || [];
+    const newAlpha = Math.min(1, parseFloat(a) + 0.1);
+    return `rgba(${r}, ${g}, ${b}, ${newAlpha.toFixed(1)})`;
+  };
+
+  // Get the color based on the original state name if available, otherwise use the current name
+  const getStateColor = (state: State) => {
+    const stateName = state.originalStateName || state.name;
+    const baseColor = stateColorMap[stateName.split(" ")[0]] || // Match the first word (e.g., "Delhi" from "Delhi 1")
+      stateColorMap[state.name] || { bg: "rgba(0, 0, 0, 0)", hover: "rgba(0, 0, 0, 0.1)" };
+    return {
+      bg: baseColor.bg,
+      hover: baseColor.hover,
+    };
+  };
+
   return (
     <div className="overflow-x-auto">
       <table className="min-w-full bg-white border border-gray-300">
@@ -133,7 +190,30 @@ const TableComponent = ({
           {data.tableData.map((state) => (
             <React.Fragment key={state.id}>
               <tr
-                className="cursor-pointer hover:bg-gray-100"
+                className="cursor-pointer"
+                style={{
+                  backgroundColor:
+                    state.name === "Grand Total"
+                      ? "white"
+                      : getLighterColor(getStateColor(state).bg, 0), // Base color for state level
+                }}
+                onMouseEnter={(e) =>
+                  state.name !== "Grand Total" &&
+                  e.currentTarget.style.setProperty(
+                    "background-color",
+                    state.name === "Grand Total"
+                      ? "rgba(249, 250, 251, 0.5)"
+                      : getHoverColor(getLighterColor(getStateColor(state).bg, 0))
+                  )
+                }
+                onMouseLeave={(e) =>
+                  e.currentTarget.style.setProperty(
+                    "background-color",
+                    state.name === "Grand Total"
+                      ? "white"
+                      : getLighterColor(getStateColor(state).bg, 0)
+                  )
+                }
                 onClick={() => toggleState(state.id)}
               >
                 <td className="py-2 px-4 border-b flex items-center">
@@ -157,7 +237,22 @@ const TableComponent = ({
                 state.regions.map((region) => (
                   <React.Fragment key={region.id}>
                     <tr
-                      className="cursor-pointer hover:bg-gray-100"
+                      className="cursor-pointer"
+                      style={{
+                        backgroundColor: getLighterColor(getStateColor(state).bg, 1), // Lighter for regions
+                      }}
+                      onMouseEnter={(e) =>
+                        e.currentTarget.style.setProperty(
+                          "background-color",
+                          getHoverColor(getLighterColor(getStateColor(state).bg, 1))
+                        )
+                      }
+                      onMouseLeave={(e) =>
+                        e.currentTarget.style.setProperty(
+                          "background-color",
+                          getLighterColor(getStateColor(state).bg, 1)
+                        )
+                      }
                       onClick={() => toggleRegion(region.id)}
                     >
                       <td className="py-2 px-4 border-b pl-8 flex items-center">
@@ -179,7 +274,27 @@ const TableComponent = ({
                     </tr>
                     {expandedRegions.has(region.id) &&
                       region.branches.map((branch) => (
-                        <tr key={branch.id} className="hover:bg-gray-100">
+                        <tr
+                          key={branch.id}
+                          className="cursor-pointer"
+                          style={{
+                            backgroundColor: getLighterColor(getLighterColor(getStateColor(state).bg, 1), 1), // Lightest for branches
+                          }}
+                          onMouseEnter={(e) =>
+                            e.currentTarget.style.setProperty(
+                              "background-color",
+                              getHoverColor(
+                                getLighterColor(getLighterColor(getStateColor(state).bg, 1), 1)
+                              )
+                            )
+                          }
+                          onMouseLeave={(e) =>
+                            e.currentTarget.style.setProperty(
+                              "background-color",
+                              getLighterColor(getLighterColor(getStateColor(state).bg, 1), 1)
+                            )
+                          }
+                        >
                           <td className="py-2 px-4 border-b pl-16">{branch.name}</td>
                           <td className="py-2 px-4 border-b">{branch.openingStock}</td>
                           <td className="py-2 px-4 border-b">{branch.applicationLogin}</td>
@@ -194,7 +309,8 @@ const TableComponent = ({
                   </React.Fragment>
                 ))}
             </React.Fragment>
-          ))}
+          ))
+        }
         </tbody>
       </table>
     </div>
