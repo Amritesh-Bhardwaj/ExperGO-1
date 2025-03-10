@@ -30,20 +30,17 @@ export default function TablePage() {
     setExpandedRegions(new Set());
   };
 
-  // Function to clear all filters
   const handleClearFilters = () => {
     setSelectedState("");
     setSelectedRegion("");
     setSelectedBranch("");
   };
 
-  // Get all unique states
   const states = tableData.tableData.map((state) => ({
     id: state.id,
     name: state.name,
   }));
 
-  // Get all unique regions (with their parent state)
   const allRegions = useMemo(() => {
     return tableData.tableData.flatMap((state) =>
       state.regions.map((region) => ({
@@ -54,7 +51,6 @@ export default function TablePage() {
     );
   }, []);
 
-  // Get all unique branches (with their parent region and state)
   const allBranches = useMemo(() => {
     return tableData.tableData.flatMap((state) =>
       state.regions.flatMap((region) =>
@@ -68,10 +64,8 @@ export default function TablePage() {
     );
   }, []);
 
-  // Handle state selection
   const handleStateChange = (stateId: string) => {
     setSelectedState(stateId);
-    // Reset region and branch if they don't belong to the new state
     if (selectedRegion) {
       const region = allRegions.find((r) => r.id === selectedRegion);
       if (region && region.stateId !== stateId) {
@@ -87,20 +81,16 @@ export default function TablePage() {
     }
   };
 
-  // Handle region selection
   const handleRegionChange = (regionId: string) => {
     setSelectedRegion(regionId);
-    // Automatically set the state if a region is selected
     if (regionId) {
       const region = allRegions.find((r) => r.id === regionId);
       if (region) {
         setSelectedState(region.stateId);
       }
     } else if (!selectedBranch) {
-      // Clear state only if no branch is selected
       setSelectedState("");
     }
-    // Reset branch if it doesn't belong to the new region
     if (selectedBranch) {
       const branch = allBranches.find((b) => b.id === selectedBranch);
       if (branch && branch.regionId !== regionId) {
@@ -109,10 +99,8 @@ export default function TablePage() {
     }
   };
 
-  // Handle branch selection
   const handleBranchChange = (branchId: string) => {
     setSelectedBranch(branchId);
-    // Automatically set the state and region if a branch is selected
     if (branchId) {
       const branch = allBranches.find((b) => b.id === branchId);
       if (branch) {
@@ -120,7 +108,6 @@ export default function TablePage() {
         setSelectedRegion(branch.regionId);
       }
     } else if (!selectedRegion) {
-      // Clear region and state only if no region is selected
       setSelectedRegion("");
       if (!selectedState) {
         setSelectedState("");
@@ -128,7 +115,6 @@ export default function TablePage() {
     }
   };
 
-  // Filter regions based on selected state (if any)
   const regions = useMemo(() => {
     if (selectedState) {
       return allRegions.filter((region) => region.stateId === selectedState);
@@ -136,7 +122,6 @@ export default function TablePage() {
     return allRegions;
   }, [selectedState, allRegions]);
 
-  // Filter branches based on selected region or state
   const branches = useMemo(() => {
     if (selectedRegion) {
       return allBranches.filter((branch) => branch.regionId === selectedRegion);
@@ -147,9 +132,7 @@ export default function TablePage() {
     return allBranches;
   }, [selectedState, selectedRegion, allBranches]);
 
-  // Filter the data based on selected state, region, and branch
   const filteredData: TableData = useMemo(() => {
-    // Case 1: If a branch is selected, show only that branch as a top-level row
     if (selectedBranch) {
       const branchInfo = allBranches.find((b) => b.id === selectedBranch);
       if (branchInfo) {
@@ -157,12 +140,11 @@ export default function TablePage() {
         const region = state?.regions.find((r) => r.id === branchInfo.regionId);
         const selectedBranchData = region?.branches.find((b) => b.id === selectedBranch);
         if (state && region && selectedBranchData) {
-          // Create a fake state with the branch promoted to the top level
           const fakeState: State = {
             ...state,
             id: selectedBranchData.id,
-            name: selectedBranchData.name, // Show branch name as top-level row
-            regions: [], // No regions, since this is a branch
+            name: selectedBranchData.name,
+            regions: [],
             openingStock: selectedBranchData.openingStock,
             applicationLogin: selectedBranchData.applicationLogin,
             sanctionCount: selectedBranchData.sanctionCount,
@@ -176,7 +158,6 @@ export default function TablePage() {
             rejection: selectedBranchData.rejection,
             cancellation: selectedBranchData.cancellation,
             wip: selectedBranchData.wip,
-            // Add the original state name to preserve color mapping
             originalStateName: state.name,
           };
           return { tableData: [fakeState] };
@@ -185,22 +166,20 @@ export default function TablePage() {
       return { tableData: [] };
     }
 
-    // Case 2: If a region is selected (but no branch), show only that region as a top-level row
     if (selectedRegion) {
       const regionInfo = allRegions.find((r) => r.id === selectedRegion);
       if (regionInfo) {
         const state = tableData.tableData.find((s) => s.id === regionInfo.stateId);
         const selectedRegionData = state?.regions.find((r) => r.id === selectedRegion);
         if (state && selectedRegionData) {
-          // Create a fake state with the region promoted to the top level
           const fakeState: State = {
             ...state,
             id: selectedRegionData.id,
-            name: selectedRegionData.name, // Show region name as top-level row
+            name: selectedRegionData.name,
             regions: selectedRegionData.branches.map((branch) => ({
               ...branch,
-              branches: [], // Ensure no further nesting
-            })), // Directly use branches as regions
+              branches: [],
+            })),
             openingStock: selectedRegionData.openingStock,
             applicationLogin: selectedRegionData.applicationLogin,
             sanctionCount: selectedRegionData.sanctionCount,
@@ -214,7 +193,6 @@ export default function TablePage() {
             rejection: selectedRegionData.rejection,
             cancellation: selectedRegionData.cancellation,
             wip: selectedRegionData.wip,
-            // Add the original state name to preserve color mapping
             originalStateName: state.name,
           };
           return { tableData: [fakeState] };
@@ -223,17 +201,14 @@ export default function TablePage() {
       return { tableData: [] };
     }
 
-    // Case 3: If a state is selected (but no region or branch), show the state with all its regions
     if (selectedState) {
       const filtered = tableData.tableData.filter((state) => state.id === selectedState);
       return { tableData: filtered };
     }
 
-    // Case 4: If nothing is selected, show all data
     return { tableData: tableData.tableData };
   }, [selectedState, selectedRegion, selectedBranch]);
 
-  // Determine if the clear button should be visible
   const isFilterApplied = selectedState || selectedRegion || selectedBranch;
 
   return (
@@ -245,7 +220,7 @@ export default function TablePage() {
             <select
               value={selectedState}
               onChange={(e) => handleStateChange(e.target.value)}
-              className="border rounded px-2 py-2"
+              className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
             >
               <option value="">Select State</option>
               {states.map((state) => (
@@ -259,7 +234,7 @@ export default function TablePage() {
             <select
               value={selectedRegion}
               onChange={(e) => handleRegionChange(e.target.value)}
-              className="border rounded px-2 py-2"
+              className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
             >
               <option value="">Select Region</option>
               {regions.map((region) => (
@@ -273,7 +248,7 @@ export default function TablePage() {
             <select
               value={selectedBranch}
               onChange={(e) => handleBranchChange(e.target.value)}
-              className="border rounded px-2 py-2"
+              className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
             >
               <option value="">Select Branch</option>
               {branches.map((branch) => (
