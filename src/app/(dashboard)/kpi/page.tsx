@@ -183,132 +183,132 @@ const page = () => {
   };
 
   return (
-    <div className="p-4">
-      <div className="grid grid-cols-4 gap-4">
+    <div className="p-2">
+      <div className="grid grid-cols-4 gap-3">
         {/* Left Section */}
-        <div className="col-span-3 space-y-4">
+        <div className="col-span-3 space-y-3">
           {/* First row - Opening Cards */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-yellow-100 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">Opening Stock</div>
-              <div className="text-5xl font-bold my-2">606</div>
-              <div className="text-sm">+8.3% from last month</div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="bg-yellow-100 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">Opening Stock</div>
+              <div className="text-3xl font-bold my-1">606</div>
+              <div className="text-xs">+8.3% from last month</div>
             </div>
-            <div className="bg-yellow-100 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">Application Login</div>
-              <div className="text-5xl font-bold my-2">620</div>
-              <div className="text-sm">-2.7% from last month</div>
+            <div className="bg-yellow-100 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">Application Login</div>
+              <div className="text-3xl font-bold my-1">620</div>
+              <div className="text-xs">-2.7% from last month</div>
             </div>
             <div></div>
             <div></div>
           </div>
 
           {/* Second row */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-green-200 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">Sanction Count</div>
-              <div className="text-5xl font-bold my-2">603.00</div>
-              <div className="text-sm">+12.1% from last month</div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="bg-green-200 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">Sanction Count</div>
+              <div className="text-3xl font-bold my-1">603.00</div>
+              <div className="text-xs">+12.1% from last month</div>
             </div>
-            <div className="bg-green-200 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">Sanction Amount (in Cr)</div>
-              <div className="text-5xl font-bold my-2">32.67</div>
-              <div className="text-sm">-4.5% from last month</div>
+            <div className="bg-green-200 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">Sanction Amount (in Cr)</div>
+              <div className="text-3xl font-bold my-1">32.67</div>
+              <div className="text-xs">-4.5% from last month</div>
             </div>
-            <div className="bg-green-200 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">PNI Sanction Count</div>
-              <div className="text-5xl font-bold my-2">427</div>
-              <div className="text-sm">+6.8% from last month</div>
+            <div className="bg-green-200 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">PNI Sanction Count</div>
+              <div className="text-3xl font-bold my-1">427</div>
+              <div className="text-xs">+6.8% from last month</div>
             </div>
-            <div className="bg-green-200 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">PNI Sanction Amount (in Cr)</div>
-              <div className="text-5xl font-bold my-2">33.54</div>
-              <div className="text-sm">-9.2% from last month</div>
+            <div className="bg-green-200 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">PNI Sanction Amount (in Cr)</div>
+              <div className="text-3xl font-bold my-1">33.54</div>
+              <div className="text-xs">-9.2% from last month</div>
             </div>
           </div>
 
           {/* Third row */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-orange-200 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">Rejection Count</div>
-              <div className="text-5xl font-bold my-2">33</div>
-              <div className="text-sm">+3.4% from last month</div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="bg-orange-200 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">Rejection Count</div>
+              <div className="text-3xl font-bold my-1">33</div>
+              <div className="text-xs">+3.4% from last month</div>
             </div>
-            <div className="bg-orange-200 p-2 rounded-md border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">Cancellation Count</div>
-              <div className="text-5xl font-bold my-2">39</div>
-              <div className="text-sm">-7.6% from last month</div>
+            <div className="bg-orange-200 p-2 rounded-md border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">Cancellation Count</div>
+              <div className="text-3xl font-bold my-1">39</div>
+              <div className="text-xs">-7.6% from last month</div>
             </div>
             <div></div>
             <div></div>
           </div>
 
           {/* Fourth row */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-green-500 p-2 rounded-md text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">DI Count</div>
-              <div className="text-5xl font-bold my-2">353</div>
-              <div className="text-sm">+11.9% from last month</div>
+          <div className="grid grid-cols-4 gap-3">
+            <div className="bg-green-500 p-2 rounded-md text-white border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">DI Count</div>
+              <div className="text-3xl font-bold my-1">353</div>
+              <div className="text-xs">+11.9% from last month</div>
             </div>
-            <div className="bg-green-500 p-2 rounded-md text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">DI Value</div>
-              <div className="text-5xl font-bold my-2">41.64</div>
-              <div className="text-sm">-1.3% from last month</div>
+            <div className="bg-green-500 p-2 rounded-md text-white border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">DI Value</div>
+              <div className="text-3xl font-bold my-1">41.64</div>
+              <div className="text-xs">-1.3% from last month</div>
             </div>
-            <div className="bg-green-500 p-2 rounded-md text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">DA Count</div>
-              <div className="text-5xl font-bold my-2">36.19</div>
-              <div className="text-sm">+4.7% from last month</div>
+            <div className="bg-green-500 p-2 rounded-md text-white border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">DA Count</div>
+              <div className="text-3xl font-bold my-1">36.19</div>
+              <div className="text-xs">+4.7% from last month</div>
             </div>
-            <div className="bg-green-500 p-2 rounded-md text-white border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">DA Value</div>
-              <div className="text-5xl font-bold my-2">35.04</div>
-              <div className="text-sm">-6.1% from last month</div>
+            <div className="bg-green-500 p-2 rounded-md text-white border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">DA Value</div>
+              <div className="text-3xl font-bold my-1">35.04</div>
+              <div className="text-xs">-6.1% from last month</div>
             </div>
           </div>
 
           {/* Fifth row - WIP Card */}
-          <div className="grid grid-cols-4 gap-4">
-            <div className="bg-yellow-100 p-2 rounded-md col-span-4 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+          <div className="grid grid-cols-4 gap-3">
+            <div className="bg-yellow-100 p-2 rounded-md col-span-4 border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
               <div className="flex justify-between items-center">
                 <div>
-                  <div className="font-semibold">WIP</div>
-                  <div className="text-5xl font-bold my-2">1118.00</div>
-                  <div className="text-sm">+9.5% from last month</div>
+                  <div className="font-semibold text-sm">WIP</div>
+                  <div className="text-3xl font-bold my-1">1118.00</div>
+                  <div className="text-xs">+9.5% from last month</div>
                 </div>
                 <button
                   onClick={toggleWipDetails}
-                  className="bg-yellow-300 px-4 py-2 rounded-md hover:bg-yellow-400 transition-colors duration-300 cursor-pointer border border-black"
+                  className="bg-yellow-300 px-3 py-1 text-sm rounded-md hover:bg-yellow-400 transition-colors duration-300 cursor-pointer border border-black"
                 >
                   {isWipDetailsVisible ? 'Hide Details' : 'Show Details'}
                 </button>
               </div>
               {isWipDetailsVisible && (
-                <div className="mt-4 grid grid-cols-5 gap-4">
-                  <div className="bg-yellow-200 p-2 rounded-md border border-black">
-                    <div className="font-semibold">Pending Approval</div>
-                    <div className="text-3xl font-bold my-1">322</div>
-                    <div className="text-sm">+2.8% from last month</div>
+                <div className="mt-2 grid grid-cols-5 gap-2">
+                  <div className="bg-yellow-200 p-1 rounded-md border border-black">
+                    <div className="font-semibold text-xs">Pending Approval</div>
+                    <div className="text-xl font-bold my-1">322</div>
+                    <div className="text-xs">+2.8% from last month</div>
                   </div>
-                  <div className="bg-yellow-200 p-2 rounded-md border border-black">
-                    <div className="font-semibold">Under Review</div>
-                    <div className="text-3xl font-bold my-1">276</div>
-                    <div className="text-sm">-5.9% from last month</div>
+                  <div className="bg-yellow-200 p-1 rounded-md border border-black">
+                    <div className="font-semibold text-xs">Under Review</div>
+                    <div className="text-xl font-bold my-1">276</div>
+                    <div className="text-xs">-5.9% from last month</div>
                   </div>
-                  <div className="bg-yellow-200 p-2 rounded-md border border-black">
-                    <div className="font-semibold">Awaiting Documents</div>
-                    <div className="text-3xl font-bold my-1">185</div>
-                    <div className="text-sm">+7.4% from last month</div>
+                  <div className="bg-yellow-200 p-1 rounded-md border border-black">
+                    <div className="font-semibold text-xs">Awaiting Documents</div>
+                    <div className="text-xl font-bold my-1">185</div>
+                    <div className="text-xs">+7.4% from last month</div>
                   </div>
-                  <div className="bg-yellow-200 p-2 rounded-md border border-black">
-                    <div className="font-semibold">Verification Stage</div>
-                    <div className="text-3xl font-bold my-1">291</div>
-                    <div className="text-sm">-0.8% from last month</div>
+                  <div className="bg-yellow-200 p-1 rounded-md border border-black">
+                    <div className="font-semibold text-xs">Verification Stage</div>
+                    <div className="text-xl font-bold my-1">291</div>
+                    <div className="text-xs">-0.8% from last month</div>
                   </div>
-                  <div className="bg-yellow-200 p-2 rounded-md border border-black">
-                    <div className="font-semibold">Final Processing</div>
-                    <div className="text-3xl font-bold my-1">44</div>
-                    <div className="text-sm">+13.2% from last month</div>
+                  <div className="bg-yellow-200 p-1 rounded-md border border-black">
+                    <div className="font-semibold text-xs">Final Processing</div>
+                    <div className="text-xl font-bold my-1">44</div>
+                    <div className="text-xs">+13.2% from last month</div>
                   </div>
                 </div>
               )}
@@ -317,31 +317,31 @@ const page = () => {
         </div>
 
         {/* Right Section */}
-        <div className="space-y-4">
+        <div className="space-y-3">
           {/* Empty space for first row */}
-          <div className="h-[108px]"></div>
+          <div className="h-16"></div>
           
           {/* Star shape - aligned with second row */}
           <div className="flex justify-center">
-            <div className="bg-blue-400 text-white p-4 relative w-48 h-48 border-2 border-black hover:scale-102 transition-all duration-300">
+            <div className="bg-blue-400 text-white p-2 relative w-32 h-32 border border-black hover:scale-102 transition-all duration-300">
               <div className="absolute inset-0 transform rotate-45 bg-blue-400 z-0"></div>
               <div className="absolute inset-0 flex flex-col items-center justify-center z-10">
-                <div className="font-semibold">FTR</div>
-                <div className="text-5xl font-bold my-2">85%</div>
-                <div className="text-sm">-3.1% from last month</div>
+                <div className="font-semibold text-sm">FTR</div>
+                <div className="text-3xl font-bold my-1">85%</div>
+                <div className="text-xs">-3.1% from last month</div>
               </div>
             </div>
           </div>
 
           {/* Empty space for third row */}
-          <div className="h-[108px]"></div>
+          <div className="h-16"></div>
 
           {/* Rectangle - aligned with fourth row */}
           <div className="flex justify-center">
-            <div className="bg-blue-400 text-white p-4 rounded-md w-48 border-2 border-black shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:scale-102 hover:shadow-[6px_6px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
-              <div className="font-semibold">Approval Rate</div>
-              <div className="text-5xl font-bold my-2">92%</div>
-              <div className="text-sm">+6.5% from last month</div>
+            <div className="bg-blue-400 text-white p-2 rounded-md w-32 border border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] hover:shadow-[3px_3px_0px_0px_rgba(0,0,0,1)] transition-all duration-300">
+              <div className="font-semibold text-sm">Approval Rate</div>
+              <div className="text-3xl font-bold my-1">92%</div>
+              <div className="text-xs">+6.5% from last month</div>
             </div>
           </div>
         </div>
