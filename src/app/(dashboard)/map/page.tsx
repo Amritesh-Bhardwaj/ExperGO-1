@@ -23,6 +23,7 @@ interface Branch {
   sanctionCount: number;
   rejection: number;
   cancellation: number;
+  freshDisbAmt: number; // Added to match JSON data
 }
 
 interface Region {
@@ -32,6 +33,7 @@ interface Region {
   sanctionCount: number;
   rejection: number;
   cancellation: number;
+  freshDisbAmt: number; // Added to match JSON data
   branches: Branch[];
 }
 
@@ -42,10 +44,10 @@ interface State {
   sanctionCount: number;
   rejection: number;
   cancellation: number;
+  freshDisbAmt: number; // Added to match JSON data
   regions: Region[];
 }
 
-// Extended interface for computed metrics
 interface ComputedState extends State {
   ftr: number;
   approvalRate: number;
@@ -58,15 +60,16 @@ interface TableData {
 }
 
 export default function MapPage() {
-  // Process data from tableData.json
   const processData = (data: TableData) => {
-    const states = data.tableData.map((state) => ({
-      ...state,
-      ftr: state.wip, // Placeholder: FTR as WIP
-      approvalRate: state.sanctionCount / (state.sanctionCount + state.rejection + state.cancellation), // Placeholder: Approval Rate
-      loginCount: state.regions.length * 10, // Placeholder: Login Count
-      freshDisbursement: state.wip * 0.5, // Placeholder: Fresh Disbursement
-    }));
+    const states = data.tableData
+      .filter((state) => state.id !== "grandTotal") // Exclude Grand Total
+      .map((state) => ({
+        ...state,
+        ftr: state.wip,
+        approvalRate: state.sanctionCount / (state.sanctionCount + state.rejection + state.cancellation),
+        loginCount: state.regions.length * 10,
+        freshDisbursement: state.freshDisbAmt, // Use actual freshDisbAmt from JSON
+      }));
 
     const grandTotals = states.reduce(
       (acc, state) => ({
@@ -85,7 +88,6 @@ export default function MapPage() {
       }
     );
 
-    // Normalize approval rate for grand totals
     grandTotals.approvalRate = grandTotals.approvalRate / states.length;
 
     return { states, grandTotals };
@@ -94,26 +96,86 @@ export default function MapPage() {
   const { states, grandTotals } = processData(tableData);
   const [selectedState, setSelectedState] = useState<string | null>(null);
 
-  // Map data for selected state or grand totals
   const mapData = selectedState
     ? states.find((state) => state.name === selectedState)
     : { name: "India", ...grandTotals };
 
-  // Bar chart data
-  const barChartData = {
-    labels: ["Fresh Disbursement", "Sanction Count"],
-    datasets: [
-      {
-        label: selectedState || "India",
-        data: [
-          mapData?.freshDisbursement ?? grandTotals.freshDisbursement,
-          mapData?.sanctionCount ?? grandTotals.sanctionCount,
+  // Bar chart data logic
+  const getBarChartData = () => {
+    if (!selectedState) {
+      // No state selected: Show all states
+      return {
+        labels: states.map((state) => state.name),
+        datasets: [
+          {
+            label: "Fresh Disbursement",
+            data: states.map((state) => state.freshDisbursement),
+            backgroundColor: "rgba(54, 162, 235, 0.6)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          },
+          {
+            label: "Sanction Count",
+            data: states.map((state) => state.sanctionCount),
+            backgroundColor: "rgba(255, 99, 132, 0.6)",
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 1,
+          },
         ],
-        backgroundColor: ["rgba(54, 162, 235, 0.6)", "rgba(255, 99, 132, 0.6)"],
-        borderColor: ["rgba(54, 162, 235, 1)", "rgba(255, 99, 132, 1)"],
-        borderWidth: 1,
-      },
-    ],
+      };
+    }
+
+    const selectedStateData = states.find((state) => state.name === selectedState);
+    if (!selectedStateData) {
+      return { labels: [], datasets: [] }; // Fallback
+    }
+
+    if (selectedStateData.regions.length > 1) {
+      // Multiple regions: Show region data
+      return {
+        labels: selectedStateData.regions.map((region) => region.name),
+        datasets: [
+          {
+            label: "Fresh Disbursement",
+            data: selectedStateData.regions.map((region) => region.freshDisbAmt),
+            backgroundColor: "rgba(54, 162, 235, 0.6)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          },
+          {
+            label: "Sanction Count",
+            data: selectedStateData.regions.map((region) => region.sanctionCount),
+            backgroundColor: "rgba(255, 99, 132, 0.6)",
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
+    } else if (selectedStateData.regions.length === 1) {
+      // Single region: Show branch data
+      const region = selectedStateData.regions[0];
+      return {
+        labels: region.branches.map((branch) => branch.name),
+        datasets: [
+          {
+            label: "Fresh Disbursement",
+            data: region.branches.map((branch) => branch.freshDisbAmt),
+            backgroundColor: "rgba(54, 162, 235, 0.6)",
+            borderColor: "rgba(54, 162, 235, 1)",
+            borderWidth: 1,
+          },
+          {
+            label: "Sanction Count",
+            data: region.branches.map((branch) => branch.sanctionCount),
+            backgroundColor: "rgba(255, 99, 132, 0.6)",
+            borderColor: "rgba(255, 99, 132, 1)",
+            borderWidth: 1,
+          },
+        ],
+      };
+    }
+
+    return { labels: [], datasets: [] }; // Fallback
   };
 
   const barChartOptions = {
@@ -130,12 +192,12 @@ export default function MapPage() {
   return (
     <div
       className="container mx-auto flex h-screen"
-      style={{ padding: "0", overflow: "hidden" }} // Remove padding to use full height
+      style={{ padding: "0", overflow: "hidden" }}
     >
       {/* Left Section (Map) - 60% */}
       <div className="w-3/5 pr-4 flex flex-col h-full">
-        <h2 className="text-2xl font-bold mb-2">India Map</h2> {/* Reduced margin */}
-        <div className="bg-white rounded-lg p-2 flex-1 overflow-hidden"> {/* Reduced padding */}
+        <h2 className="text-2xl font-bold mb-2">India Map</h2>
+        <div className="bg-white rounded-lg p-2 flex-1 overflow-hidden">
           <IndiaMap setSelectedState={setSelectedState} />
         </div>
       </div>
@@ -143,27 +205,27 @@ export default function MapPage() {
       {/* Right Section - 40% */}
       <div className="w-2/5 pl-4 flex flex-col h-full">
         {/* Top Section (KPIs) - 50% */}
-        <div className="bg-white rounded-lg p-2 mb-2 flex-1 overflow-hidden"> {/* Reduced padding and margin */}
-          <h2 className="text-2xl font-bold mb-2">Key Metrics</h2> {/* Reduced margin */}
-          <div className="flex justify-between items-center gap-2 h-full overflow-hidden"> {/* Reduced gap */}
+        <div className="bg-white rounded-lg p-2 mb-2 flex-1 overflow-hidden">
+          <h2 className="text-2xl font-bold mb-2">Key Metrics</h2>
+          <div className="flex justify-between items-center gap-2 h-full overflow-hidden">
             <KpiCard
               title="FTR"
               value={(mapData?.ftr ?? grandTotals.ftr).toFixed(2)}
-              change={0} // No historical data available for change
+              change={0}
               unit=""
               isExpandable={false}
             />
             <KpiCard
               title="Approval Rate"
               value={((mapData?.approvalRate ?? grandTotals.approvalRate) * 100).toFixed(2)}
-              change={0} // No historical data available for change
+              change={0}
               unit="%"
               isExpandable={false}
             />
             <KpiCard
               title="Login Count"
               value={mapData?.loginCount ?? grandTotals.loginCount}
-              change={0} // No historical data available for change
+              change={0}
               unit=""
               isExpandable={false}
             />
@@ -171,10 +233,10 @@ export default function MapPage() {
         </div>
 
         {/* Bottom Section (Bar Graph) - 50% */}
-        <div className="bg-white rounded-lg p-2 flex-1 overflow-hidden"> {/* Reduced padding */}
-          <h2 className="text-2xl font-bold mb-2">Disbursement & Sanction</h2> {/* Reduced margin */}
+        <div className="bg-white rounded-lg p-2 flex-1 overflow-hidden">
+          <h2 className="text-2xl font-bold mb-2">Disbursement & Sanction</h2>
           <div className="h-full">
-            <Bar data={barChartData} options={barChartOptions} />
+            <Bar data={getBarChartData()} options={barChartOptions} />
           </div>
         </div>
       </div>
