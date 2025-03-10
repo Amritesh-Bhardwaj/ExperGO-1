@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -11,9 +11,10 @@ import {
   ChartOptions,
   TooltipItem,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import tableData from "@/app/data/tableData.json";
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(ArcElement, Tooltip, Legend, ChartDataLabels);
 
 interface Branch {
   id: string;
@@ -52,7 +53,6 @@ export default function PieChartPage() {
   const processData = (data: TableData) => {
     const states = data.tableData;
 
-    // WIP Data
     const wipData = states.reduce((acc, state) => {
       acc += state.wip;
       state.regions.forEach((region) => {
@@ -72,7 +72,6 @@ export default function PieChartPage() {
       { title: "Final Processing", value: wipData * 0.1 },
     ];
 
-    // HL/LAP Data
     const hlLapData = states.reduce(
       (acc, state) => {
         acc.total += state.sanctionCount;
@@ -89,7 +88,6 @@ export default function PieChartPage() {
     const hlValue = hlLapData.total * 0.6;
     const lapValue = hlLapData.total * 0.4;
 
-    // Rejection/Cancellation Data
     const rejectionCancellationData = states.reduce(
       (acc, state) => {
         acc.rejection += state.rejection;
@@ -112,62 +110,76 @@ export default function PieChartPage() {
 
   const { wipChildrenData, hlLapData, rejectionCancellationData } = processData(tableData);
 
-  // Chart Data
+  const [wipVisibility, setWipVisibility] = useState<boolean[]>(
+    new Array(wipChildrenData.length).fill(true)
+  );
+  const [hlLapVisibility, setHlLapVisibility] = useState<boolean[]>([true, true]);
+  const [rejectionCancellationVisibility, setRejectionCancellationVisibility] = useState<boolean[]>([true, true]);
+
   const wipChartData: ChartData<"pie", number[], string> = {
-    labels: wipChildrenData.map((d) => d.title),
+    labels: wipChildrenData.map((d) => d.title).filter((_, i) => wipVisibility[i]),
     datasets: [
       {
-        data: wipChildrenData.map((d) => d.value),
+        data: wipChildrenData.map((d) => d.value).filter((_, i) => wipVisibility[i]),
         backgroundColor: [
           "rgba(255, 99, 132, 0.6)",
           "rgba(54, 162, 235, 0.6)",
           "rgba(255, 206, 86, 0.6)",
           "rgba(75, 192, 192, 0.6)",
           "rgba(153, 102, 255, 0.6)",
-        ],
+        ].filter((_, i) => wipVisibility[i]),
         borderColor: [
           "rgba(255, 99, 132, 1)",
           "rgba(54, 162, 235, 1)",
           "rgba(255, 206, 86, 1)",
           "rgba(75, 192, 192, 1)",
           "rgba(153, 102, 255, 1)",
-        ],
+        ].filter((_, i) => wipVisibility[i]),
         borderWidth: 1,
       },
     ],
   };
 
   const hlLapChartData: ChartData<"pie", number[], string> = {
-    labels: ["HL", "LAP"],
+    labels: ["HL", "LAP"].filter((_, i) => hlLapVisibility[i]),
     datasets: [
       {
-        data: hlLapData,
-        backgroundColor: ["rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)"],
-        borderColor: ["rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)"],
+        data: hlLapData.filter((_, i) => hlLapVisibility[i]),
+        backgroundColor: ["rgba(54, 162, 235, 0.6)", "rgba(255, 206, 86, 0.6)"].filter(
+          (_, i) => hlLapVisibility[i]
+        ),
+        borderColor: ["rgba(54, 162, 235, 1)", "rgba(255, 206, 86, 1)"].filter(
+          (_, i) => hlLapVisibility[i]
+        ),
         borderWidth: 1,
       },
     ],
   };
 
   const rejectionCancellationChartData: ChartData<"pie", number[], string> = {
-    labels: ["Rejection", "Cancellation"],
+    labels: ["Rejection", "Cancellation"].filter((_, i) => rejectionCancellationVisibility[i]),
     datasets: [
       {
-        data: [rejectionCancellationData.rejection, rejectionCancellationData.cancellation],
-        backgroundColor: ["rgba(255, 99, 132, 0.6)", "rgba(75, 192, 192, 0.6)"],
-        borderColor: ["rgba(255, 99, 132, 1)", "rgba(75, 192, 192, 1)"],
+        data: [rejectionCancellationData.rejection, rejectionCancellationData.cancellation].filter(
+          (_, i) => rejectionCancellationVisibility[i]
+        ),
+        backgroundColor: ["rgba(255, 99, 132, 0.6)", "rgba(75, 192, 192, 0.6)"].filter(
+          (_, i) => rejectionCancellationVisibility[i]
+        ),
+        borderColor: ["rgba(255, 99, 132, 1)", "rgba(75, 192, 192, 1)"].filter(
+          (_, i) => rejectionCancellationVisibility[i]
+        ),
         borderWidth: 1,
       },
     ],
   };
 
-  // Chart Options with Tooltips
   const chartOptions: ChartOptions<"pie"> = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        position: "top",
+        display: false,
       },
       tooltip: {
         callbacks: {
@@ -180,7 +192,44 @@ export default function PieChartPage() {
           },
         },
       },
+      datalabels: {
+        formatter: (value: number, context: any) => {
+          const total = context.dataset.data.reduce((acc: number, val: number) => acc + val, 0);
+          const percentage = ((value / total) * 100).toFixed(2);
+          return `${percentage}%`;
+        },
+        color: "#000",
+        font: {
+          weight: "bold",
+          size: 14,
+        },
+        textAlign: "center",
+      },
     },
+  };
+
+  const toggleWipVisibility = (index: number) => {
+    setWipVisibility((prev) => {
+      const newVisibility = [...prev];
+      newVisibility[index] = !newVisibility[index];
+      return newVisibility;
+    });
+  };
+
+  const toggleHlLapVisibility = (index: number) => {
+    setHlLapVisibility((prev) => {
+      const newVisibility = [...prev];
+      newVisibility[index] = !newVisibility[index];
+      return newVisibility;
+    });
+  };
+
+  const toggleRejectionCancellationVisibility = (index: number) => {
+    setRejectionCancellationVisibility((prev) => {
+      const newVisibility = [...prev];
+      newVisibility[index] = !newVisibility[index];
+      return newVisibility;
+    });
   };
 
   return (
@@ -190,27 +239,66 @@ export default function PieChartPage() {
         <div className="grid grid-cols-2 gap-6 mb-6">
           {/* WIP Pie Chart */}
           <div className="bg-white rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">WIP</h2>
+            <div className="flex flex-wrap gap-4 mb-4">
+              {wipChildrenData.map((item, index) => (
+                <label key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={wipVisibility[index]}
+                    onChange={() => toggleWipVisibility(index)}
+                    className="mr-2"
+                  />
+                  {item.title}
+                </label>
+              ))}
+            </div>
             <div className="w-full h-64">
               <Pie data={wipChartData} options={chartOptions} />
             </div>
+            <h2 className="text-xl font-semibold mt-4 text-center">WIP</h2>
           </div>
 
           {/* HL/LAP Pie Chart */}
           <div className="bg-white rounded-lg p-4">
-            <h2 className="text-xl font-semibold mb-4">HL/LAP</h2>
+            <div className="flex gap-4 mb-4">
+              {["HL", "LAP"].map((label, index) => (
+                <label key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={hlLapVisibility[index]}
+                    onChange={() => toggleHlLapVisibility(index)}
+                    className="mr-2"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
             <div className="w-full h-64">
               <Pie data={hlLapChartData} options={chartOptions} />
             </div>
+            <h2 className="text-xl font-semibold mt-4 text-center">HL/LAP</h2>
           </div>
         </div>
         <div className="grid justify-center">
           {/* Rejection/Cancellation Pie Chart */}
           <div className="bg-white rounded-lg p-4 w-full max-w-xs">
-            <h2 className="text-xl font-semibold mb-4">Rejection/Cancellation</h2>
+            <div className="flex gap-4 mb-4">
+              {["Rejection", "Cancellation"].map((label, index) => (
+                <label key={index} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={rejectionCancellationVisibility[index]}
+                    onChange={() => toggleRejectionCancellationVisibility(index)}
+                    className="mr-2"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
             <div className="w-full h-64">
               <Pie data={rejectionCancellationChartData} options={chartOptions} />
             </div>
+            <h2 className="text-xl font-semibold mt-4 text-center">Rejection/Cancellation</h2>
           </div>
         </div>
       </div>
