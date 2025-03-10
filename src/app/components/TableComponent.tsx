@@ -39,7 +39,7 @@ export interface Region {
   cancellation: number;
   wip: number;
   branches: Branch[];
-  isBranch?: boolean; // Added to indicate if this is a promoted branch
+  isBranch?: boolean;
 }
 
 export interface State {
@@ -59,8 +59,8 @@ export interface State {
   cancellation: number;
   wip: number;
   regions: Region[];
-  originalStateName?: string; // Added to track the original state for color purposes
-  isBranch?: boolean; // Added to indicate if this is a promoted branch
+  originalStateName?: string;
+  isBranch?: boolean;
 }
 
 export interface TableData {
@@ -115,7 +115,6 @@ const TableComponent = ({
     [setExpandedRegions]
   );
 
-  // Color mappings for states
   const stateColorMap: { [key: string]: { bg: string; hover: string } } = {
     Delhi: {
       bg: "rgba(255, 99, 132, 0.6)",
@@ -147,24 +146,21 @@ const TableComponent = ({
     },
   };
 
-  // Function to get a lighter version of a color by reducing alpha
   const getLighterColor = (color: string, level: number) => {
     const [, r, g, b, a] = color.match(/rgba\((\d+), (\d+), (\d+), ([\d.]+)\)/) || [];
-    const newAlpha = Math.max(0, parseFloat(a) - 0.2 * level); // Reduce alpha by 0.2 per level
+    const newAlpha = Math.max(0, parseFloat(a) - 0.2 * level);
     return `rgba(${r}, ${g}, ${b}, ${newAlpha.toFixed(1)})`;
   };
 
-  // Function to get hover color (darker by increasing alpha)
   const getHoverColor = (color: string) => {
     const [, r, g, b, a] = color.match(/rgba\((\d+), (\d+), (\d+), ([\d.]+)\)/) || [];
     const newAlpha = Math.min(1, parseFloat(a) + 0.1);
     return `rgba(${r}, ${g}, ${b}, ${newAlpha.toFixed(1)})`;
   };
 
-  // Get the color based on the original state name if available, otherwise use the current name
   const getStateColor = (state: State) => {
     const stateName = state.originalStateName || state.name;
-    const baseColor = stateColorMap[stateName.split(" ")[0]] || // Match the first word (e.g., "Delhi" from "Delhi 1")
+    const baseColor = stateColorMap[stateName.split(" ")[0]] ||
       stateColorMap[state.name] || { bg: "rgba(0, 0, 0, 0)", hover: "rgba(0, 0, 0, 0.1)" };
     return {
       bg: baseColor.bg,
@@ -196,31 +192,30 @@ const TableComponent = ({
                 style={{
                   backgroundColor:
                     state.name === "Grand Total"
-                      ? "white"
-                      : getLighterColor(getStateColor(state).bg, 0), // Base color for state level
+                      ? "#000000" // Black background for Grand Total
+                      : getLighterColor(getStateColor(state).bg, 0),
+                  color: state.name === "Grand Total" ? "#FFFFFF" : "inherit", // White text for Grand Total
                 }}
                 onMouseEnter={(e) =>
                   state.name !== "Grand Total" &&
                   e.currentTarget.style.setProperty(
                     "background-color",
-                    state.name === "Grand Total"
-                      ? "rgba(249, 250, 251, 0.5)"
-                      : getHoverColor(getLighterColor(getStateColor(state).bg, 0))
+                    getHoverColor(getLighterColor(getStateColor(state).bg, 0))
                   )
                 }
                 onMouseLeave={(e) =>
                   e.currentTarget.style.setProperty(
                     "background-color",
                     state.name === "Grand Total"
-                      ? "white"
+                      ? "#000000" // Maintain black on mouse leave
                       : getLighterColor(getStateColor(state).bg, 0)
                   )
                 }
-                onClick={() => !state.isBranch && toggleState(state.id)} // Only toggle if not a branch
+                onClick={() => !state.isBranch && toggleState(state.id)}
               >
                 <td className="py-2 px-4 border-b flex items-center">
                   {state.name}{" "}
-                  {!state.isBranch && state.regions && state.regions.length > 0 && ( // Only show chevron if not a branch and has regions
+                  {!state.isBranch && state.regions && state.regions.length > 0 && (
                     expandedStates.has(state.id) ? (
                       <ChevronDown className="ml-2 h-4 w-4" />
                     ) : (
@@ -243,7 +238,7 @@ const TableComponent = ({
                     <tr
                       className="cursor-pointer"
                       style={{
-                        backgroundColor: getLighterColor(getStateColor(state).bg, 1), // Lighter for regions
+                        backgroundColor: getLighterColor(getStateColor(state).bg, 1),
                       }}
                       onMouseEnter={(e) =>
                         e.currentTarget.style.setProperty(
@@ -257,11 +252,11 @@ const TableComponent = ({
                           getLighterColor(getStateColor(state).bg, 1)
                         )
                       }
-                      onClick={() => !region.isBranch && toggleRegion(region.id)} // Only toggle if not a branch
+                      onClick={() => !region.isBranch && toggleRegion(region.id)}
                     >
                       <td className="py-2 px-4 border-b pl-8 flex items-center">
                         {region.name}{" "}
-                        {!region.isBranch && region.branches && region.branches.length > 0 && ( // Only show chevron if not a branch and has branches
+                        {!region.isBranch && region.branches && region.branches.length > 0 && (
                           expandedRegions.has(region.id) ? (
                             <ChevronDown className="ml-2 h-4 w-4" />
                           ) : (
@@ -284,7 +279,7 @@ const TableComponent = ({
                           key={branch.id}
                           className="cursor-pointer"
                           style={{
-                            backgroundColor: getLighterColor(getLighterColor(getStateColor(state).bg, 1), 1), // Lightest for branches
+                            backgroundColor: getLighterColor(getLighterColor(getStateColor(state).bg, 1), 1),
                           }}
                           onMouseEnter={(e) =>
                             e.currentTarget.style.setProperty(
