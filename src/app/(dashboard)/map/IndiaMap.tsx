@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 
 // Define the props interface for IndiaMap
 interface IndiaMapProps {
@@ -18,8 +18,21 @@ const stateColors: { [key: string]: string } = {
   "Uttar Pradesh": "rgba(199, 199, 199, 0.6)", // Gray
 };
 
+// Define coordinates for the states (center points)
+const stateCoordinates: { [key: string]: { x: number, y: number } } = {
+  Delhi: { x: 200, y: 220 },
+  Gujarat: { x: 65, y: 400 },
+  Haryana: { x: 185, y: 210 },
+  Maharashtra: { x: 175, y: 490 },
+  "Madhya Pradesh": { x: 230, y: 350 },
+  Rajasthan: { x: 122, y: 288 },
+  "Uttar Pradesh": { x: 290, y: 260 },
+};
+
 const IndiaMap: React.FC<IndiaMapProps> = ({ setSelectedState }) => {
   const [selectedState, setLocalSelectedState] = useState<string | null>(null);
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [viewBox, setViewBox] = useState("0 0 612 696");
 
   const handleStateClick = (stateName: string) => {
     const newState = selectedState === stateName ? null : stateName;
@@ -37,12 +50,27 @@ const IndiaMap: React.FC<IndiaMapProps> = ({ setSelectedState }) => {
     return !selectedState || selectedState === stateName;
   };
 
+  // Update viewBox when a state is selected
+  useEffect(() => {
+    if (selectedState && stateCoordinates[selectedState]) {
+      // Center the selected state with a zoomed view
+      const coords = stateCoordinates[selectedState];
+      // Calculate a smaller viewBox centered on the state
+      // Format: "x y width height"
+      setViewBox(`${coords.x - 150} ${coords.y - 150} 300 300`);
+    } else {
+      // Reset to default viewBox when no state is selected
+      setViewBox("0 0 612 696");
+    }
+  }, [selectedState]);
+
   return (
     <svg
+      ref={svgRef}
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 612 696"
+      viewBox={viewBox}
       aria-label="Map of India"
-      className=""
+      className="transition-all duration-500 ease-in-out"
       style={{ width: "100%", height: "100%" }}
     >
       {/* Background for the map */}
