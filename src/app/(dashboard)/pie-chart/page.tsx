@@ -232,6 +232,25 @@ export default function PieChartPage() {
     });
   };
 
+  // Define full color arrays (before filtering) to map to original indices
+  const wipColors = [
+    "rgba(255, 99, 132, 0.6)", // Pending Approval
+    "rgba(54, 162, 235, 0.6)", // Under Review
+    "rgba(255, 206, 86, 0.6)", // Awaiting Documents
+    "rgba(75, 192, 192, 0.6)", // Verification Stage
+    "rgba(153, 102, 255, 0.6)", // Final Processing
+  ];
+
+  const hlLapColors = [
+    "rgba(54, 162, 235, 0.6)", // HL
+    "rgba(255, 206, 86, 0.6)", // LAP
+  ];
+
+  const rejectionCancellationColors = [
+    "rgba(255, 99, 132, 0.6)", // Rejection
+    "rgba(75, 192, 192, 0.6)", // Cancellation
+  ];
+
   return (
     <div className="container mx-auto p-6">
       <h1 className="text-3xl font-bold mb-6">Pie Chart Page</h1>
@@ -241,7 +260,16 @@ export default function PieChartPage() {
           <div className="bg-white rounded-lg p-4">
             <div className="flex flex-wrap gap-4 mb-4">
               {wipChildrenData.map((item, index) => (
-                <label key={index} className="flex items-center">
+                <label
+                  key={index}
+                  className="flex items-center"
+                  style={{
+                    textDecoration: "underline",
+                    textDecorationColor: wipColors[index],
+                    textDecorationThickness: "4px", // Increased to 4px for thicker underline
+                    textUnderlineOffset: "3px", // Keep offset at 3px
+                  }}
+                >
                   <input
                     type="checkbox"
                     checked={wipVisibility[index]}
@@ -262,7 +290,16 @@ export default function PieChartPage() {
           <div className="bg-white rounded-lg p-4">
             <div className="flex gap-4 mb-4">
               {["HL", "LAP"].map((label, index) => (
-                <label key={index} className="flex items-center">
+                <label
+                  key={index}
+                  className="flex items-center"
+                  style={{
+                    textDecoration: "underline",
+                    textDecorationColor: hlLapColors[index],
+                    textDecorationThickness: "4px", // Increased to 4px for thicker underline
+                    textUnderlineOffset: "3px", // Keep offset at 3px
+                  }}
+                >
                   <input
                     type="checkbox"
                     checked={hlLapVisibility[index]}
@@ -284,7 +321,16 @@ export default function PieChartPage() {
           <div className="bg-white rounded-lg p-4 w-full max-w-xs">
             <div className="flex gap-4 mb-4">
               {["Rejection", "Cancellation"].map((label, index) => (
-                <label key={index} className="flex items-center">
+                <label
+                  key={index}
+                  className="flex items-center"
+                  style={{
+                    textDecoration: "underline",
+                    textDecorationColor: rejectionCancellationColors[index],
+                    textDecorationThickness: "4px", // Increased to 4px for thicker underline
+                    textUnderlineOffset: "3px", // Keep offset at 3px
+                  }}
+                >
                   <input
                     type="checkbox"
                     checked={rejectionCancellationVisibility[index]}
