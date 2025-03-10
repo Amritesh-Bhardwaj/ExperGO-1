@@ -9,6 +9,7 @@ import {
   LinearScale,
   Tooltip as ChartTooltip,
   Legend,
+  TooltipItem, // Added for correct typing
 } from "chart.js";
 import IndiaMap from "./IndiaMap";
 import tableData from "@/app/data/tableData.json";
@@ -123,7 +124,7 @@ export default function MapPage() {
       label: "Sanction Count",
       backgroundColor: "rgba(255, 99, 132, 0.6)",
       borderColor: "rgba(255, 99, 132, 1)",
-    }
+    },
   ];
 
   // Bar chart data logic
@@ -134,7 +135,7 @@ export default function MapPage() {
     if (!selectedState) {
       // No state selected: Show all states
       labels = states.map((state) => state.name);
-      
+
       // Only add visible datasets
       if (datasetVisibility[0]) {
         datasets.push({
@@ -145,7 +146,7 @@ export default function MapPage() {
           borderWidth: 1,
         });
       }
-      
+
       if (datasetVisibility[1]) {
         datasets.push({
           label: datasetProperties[1].label,
@@ -164,7 +165,7 @@ export default function MapPage() {
       if (selectedStateData.regions.length > 1) {
         // Multiple regions: Show region data
         labels = selectedStateData.regions.map((region) => region.name);
-        
+
         if (datasetVisibility[0]) {
           datasets.push({
             label: datasetProperties[0].label,
@@ -174,7 +175,7 @@ export default function MapPage() {
             borderWidth: 1,
           });
         }
-        
+
         if (datasetVisibility[1]) {
           datasets.push({
             label: datasetProperties[1].label,
@@ -188,7 +189,7 @@ export default function MapPage() {
         // Single region: Show branch data
         const region = selectedStateData.regions[0];
         labels = region.branches.map((branch) => branch.name);
-        
+
         if (datasetVisibility[0]) {
           datasets.push({
             label: datasetProperties[0].label,
@@ -198,7 +199,7 @@ export default function MapPage() {
             borderWidth: 1,
           });
         }
-        
+
         if (datasetVisibility[1]) {
           datasets.push({
             label: datasetProperties[1].label,
@@ -221,18 +222,18 @@ export default function MapPage() {
       legend: { display: false }, // Hide default legend since we're using custom checkboxes
       tooltip: {
         callbacks: {
-          label: function(context: { dataset: { label: any; }; parsed: { y: any; }; }) {
-            return `${context.dataset.label}: ${context.parsed.y}`;
-          }
-        }
-      }
+          label: function (tooltipItem: TooltipItem<"bar">) { // Updated to use TooltipItem<"bar">
+            return `${tooltipItem.dataset.label}: ${tooltipItem.parsed.y}`;
+          },
+        },
+      },
     },
     scales: {
-      y: { 
+      y: {
         beginAtZero: true,
         ticks: {
-          precision: 0
-        }
+          precision: 0,
+        },
       },
       x: {
         ticks: {
@@ -240,19 +241,19 @@ export default function MapPage() {
           minRotation: 45,
           autoSkip: false,
           font: {
-            size: 10
-          }
+            size: 10,
+          },
         },
-        afterFit: function(scale: { height: number; }) {
+        afterFit: function (scale: { height: number }) {
           scale.height = 80; // Add more space for the rotated labels
-        }
-      }
+        },
+      },
     },
     layout: {
       padding: {
-        bottom: 10 // Add some bottom padding
-      }
-    }
+        bottom: 10, // Add some bottom padding
+      },
+    },
   };
 
   return (
@@ -302,7 +303,7 @@ export default function MapPage() {
         <div className="bg-white rounded-lg p-2 h-[60%] overflow-hidden">
           <div className="flex justify-between items-center mb-1">
             <h2 className="text-lg font-bold">Disbursement & Sanction</h2>
-            
+
             {/* Custom Legend with Checkboxes */}
             <div className="flex gap-4">
               {datasetProperties.map((dataset, index) => (
@@ -327,8 +328,8 @@ export default function MapPage() {
               ))}
             </div>
           </div>
-          
-          <div className="h-[calc(100%-2rem)]"> {/* Adjust height to account for heading */}
+
+          <div className="h-[calc(100%-2rem)]">
             <Bar data={getBarChartData()} options={barChartOptions} />
           </div>
         </div>
