@@ -23,7 +23,7 @@ interface Branch {
   sanctionCount: number;
   rejection: number;
   cancellation: number;
-  freshDisbAmt: number; // Added to match JSON data
+  freshDisbAmt: number;
 }
 
 interface Region {
@@ -33,7 +33,7 @@ interface Region {
   sanctionCount: number;
   rejection: number;
   cancellation: number;
-  freshDisbAmt: number; // Added to match JSON data
+  freshDisbAmt: number;
   branches: Branch[];
 }
 
@@ -44,7 +44,7 @@ interface State {
   sanctionCount: number;
   rejection: number;
   cancellation: number;
-  freshDisbAmt: number; // Added to match JSON data
+  freshDisbAmt: number;
   regions: Region[];
 }
 
@@ -60,6 +60,9 @@ interface TableData {
 }
 
 export default function MapPage() {
+  // Chart data series visibility state
+  const [datasetVisibility, setDatasetVisibility] = useState<boolean[]>([true, true]);
+
   const processData = (data: TableData) => {
     const states = data.tableData
       .filter((state) => state.id !== "grandTotal") // Exclude Grand Total
@@ -68,7 +71,7 @@ export default function MapPage() {
         ftr: state.wip,
         approvalRate: state.sanctionCount / (state.sanctionCount + state.rejection + state.cancellation),
         loginCount: state.regions.length * 10,
-        freshDisbursement: state.freshDisbAmt, // Use actual freshDisbAmt from JSON
+        freshDisbursement: state.freshDisbAmt,
       }));
 
     const grandTotals = states.reduce(
@@ -100,98 +103,161 @@ export default function MapPage() {
     ? states.find((state) => state.name === selectedState)
     : { name: "India", ...grandTotals };
 
+  // Toggle visibility for a dataset
+  const toggleDatasetVisibility = (index: number) => {
+    setDatasetVisibility((prev) => {
+      const newVisibility = [...prev];
+      newVisibility[index] = !newVisibility[index];
+      return newVisibility;
+    });
+  };
+
+  // Define dataset properties with colors for consistency
+  const datasetProperties = [
+    {
+      label: "Fresh Disbursement",
+      backgroundColor: "rgba(54, 162, 235, 0.6)",
+      borderColor: "rgba(54, 162, 235, 1)",
+    },
+    {
+      label: "Sanction Count",
+      backgroundColor: "rgba(255, 99, 132, 0.6)",
+      borderColor: "rgba(255, 99, 132, 1)",
+    }
+  ];
+
   // Bar chart data logic
   const getBarChartData = () => {
+    let labels: string[] = [];
+    let datasets: any[] = [];
+
     if (!selectedState) {
       // No state selected: Show all states
-      return {
-        labels: states.map((state) => state.name),
-        datasets: [
-          {
-            label: "Fresh Disbursement",
-            data: states.map((state) => state.freshDisbursement),
-            backgroundColor: "rgba(54, 162, 235, 0.6)",
-            borderColor: "rgba(54, 162, 235, 1)",
-            borderWidth: 1,
-          },
-          {
-            label: "Sanction Count",
-            data: states.map((state) => state.sanctionCount),
-            backgroundColor: "rgba(255, 99, 132, 0.6)",
-            borderColor: "rgba(255, 99, 132, 1)",
-            borderWidth: 1,
-          },
-        ],
-      };
-    }
+      labels = states.map((state) => state.name);
+      
+      // Only add visible datasets
+      if (datasetVisibility[0]) {
+        datasets.push({
+          label: datasetProperties[0].label,
+          data: states.map((state) => state.freshDisbursement),
+          backgroundColor: datasetProperties[0].backgroundColor,
+          borderColor: datasetProperties[0].borderColor,
+          borderWidth: 1,
+        });
+      }
+      
+      if (datasetVisibility[1]) {
+        datasets.push({
+          label: datasetProperties[1].label,
+          data: states.map((state) => state.sanctionCount),
+          backgroundColor: datasetProperties[1].backgroundColor,
+          borderColor: datasetProperties[1].borderColor,
+          borderWidth: 1,
+        });
+      }
+    } else {
+      const selectedStateData = states.find((state) => state.name === selectedState);
+      if (!selectedStateData) {
+        return { labels: [], datasets: [] }; // Fallback
+      }
 
-    const selectedStateData = states.find((state) => state.name === selectedState);
-    if (!selectedStateData) {
-      return { labels: [], datasets: [] }; // Fallback
-    }
-
-    if (selectedStateData.regions.length > 1) {
-      // Multiple regions: Show region data
-      return {
-        labels: selectedStateData.regions.map((region) => region.name),
-        datasets: [
-          {
-            label: "Fresh Disbursement",
+      if (selectedStateData.regions.length > 1) {
+        // Multiple regions: Show region data
+        labels = selectedStateData.regions.map((region) => region.name);
+        
+        if (datasetVisibility[0]) {
+          datasets.push({
+            label: datasetProperties[0].label,
             data: selectedStateData.regions.map((region) => region.freshDisbAmt),
-            backgroundColor: "rgba(54, 162, 235, 0.6)",
-            borderColor: "rgba(54, 162, 235, 1)",
+            backgroundColor: datasetProperties[0].backgroundColor,
+            borderColor: datasetProperties[0].borderColor,
             borderWidth: 1,
-          },
-          {
-            label: "Sanction Count",
+          });
+        }
+        
+        if (datasetVisibility[1]) {
+          datasets.push({
+            label: datasetProperties[1].label,
             data: selectedStateData.regions.map((region) => region.sanctionCount),
-            backgroundColor: "rgba(255, 99, 132, 0.6)",
-            borderColor: "rgba(255, 99, 132, 1)",
+            backgroundColor: datasetProperties[1].backgroundColor,
+            borderColor: datasetProperties[1].borderColor,
             borderWidth: 1,
-          },
-        ],
-      };
-    } else if (selectedStateData.regions.length === 1) {
-      // Single region: Show branch data
-      const region = selectedStateData.regions[0];
-      return {
-        labels: region.branches.map((branch) => branch.name),
-        datasets: [
-          {
-            label: "Fresh Disbursement",
+          });
+        }
+      } else if (selectedStateData.regions.length === 1) {
+        // Single region: Show branch data
+        const region = selectedStateData.regions[0];
+        labels = region.branches.map((branch) => branch.name);
+        
+        if (datasetVisibility[0]) {
+          datasets.push({
+            label: datasetProperties[0].label,
             data: region.branches.map((branch) => branch.freshDisbAmt),
-            backgroundColor: "rgba(54, 162, 235, 0.6)",
-            borderColor: "rgba(54, 162, 235, 1)",
+            backgroundColor: datasetProperties[0].backgroundColor,
+            borderColor: datasetProperties[0].borderColor,
             borderWidth: 1,
-          },
-          {
-            label: "Sanction Count",
+          });
+        }
+        
+        if (datasetVisibility[1]) {
+          datasets.push({
+            label: datasetProperties[1].label,
             data: region.branches.map((branch) => branch.sanctionCount),
-            backgroundColor: "rgba(255, 99, 132, 0.6)",
-            borderColor: "rgba(255, 99, 132, 1)",
+            backgroundColor: datasetProperties[1].backgroundColor,
+            borderColor: datasetProperties[1].borderColor,
             borderWidth: 1,
-          },
-        ],
-      };
+          });
+        }
+      }
     }
 
-    return { labels: [], datasets: [] }; // Fallback
+    return { labels, datasets };
   };
 
   const barChartOptions = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { position: "top" as const },
+      legend: { display: false }, // Hide default legend since we're using custom checkboxes
+      tooltip: {
+        callbacks: {
+          label: function(context: { dataset: { label: any; }; parsed: { y: any; }; }) {
+            return `${context.dataset.label}: ${context.parsed.y}`;
+          }
+        }
+      }
     },
     scales: {
-      y: { beginAtZero: true },
+      y: { 
+        beginAtZero: true,
+        ticks: {
+          precision: 0
+        }
+      },
+      x: {
+        ticks: {
+          maxRotation: 45,
+          minRotation: 45,
+          autoSkip: false,
+          font: {
+            size: 10
+          }
+        },
+        afterFit: function(scale: { height: number; }) {
+          scale.height = 80; // Add more space for the rotated labels
+        }
+      }
     },
+    layout: {
+      padding: {
+        bottom: 10 // Add some bottom padding
+      }
+    }
   };
 
   return (
     <div
-      className="container mx-auto flex h-screen"
+      className="container mx-auto flex h-[85vh]"
       style={{ padding: "0", overflow: "hidden" }}
     >
       {/* Left Section (Map) - 60% */}
@@ -204,8 +270,8 @@ export default function MapPage() {
 
       {/* Right Section - 40% */}
       <div className="w-2/5 pl-4 flex flex-col h-full">
-        {/* Top Section (KPIs) - 50% */}
-        <div className="bg-white rounded-lg p-2 mb-2 flex-1 overflow-hidden">
+        {/* Top Section (KPIs) - 40% instead of 50% */}
+        <div className="bg-white rounded-lg p-2 mb-2 h-[40%] overflow-hidden">
           <h2 className="text-2xl font-bold mb-2">Key Metrics</h2>
           <div className="flex justify-between items-center gap-2 h-full overflow-hidden">
             <KpiCard
@@ -232,10 +298,37 @@ export default function MapPage() {
           </div>
         </div>
 
-        {/* Bottom Section (Bar Graph) - 50% */}
-        <div className="bg-white rounded-lg p-2 flex-1 overflow-hidden">
-          <h2 className="text-2xl font-bold mb-2">Disbursement & Sanction</h2>
-          <div className="h-full">
+        {/* Bottom Section (Bar Graph) - 60% instead of 50% */}
+        <div className="bg-white rounded-lg p-2 h-[60%] overflow-hidden">
+          <div className="flex justify-between items-center mb-1">
+            <h2 className="text-lg font-bold">Disbursement & Sanction</h2>
+            
+            {/* Custom Legend with Checkboxes */}
+            <div className="flex gap-4">
+              {datasetProperties.map((dataset, index) => (
+                <label
+                  key={index}
+                  className="flex items-center text-sm"
+                  style={{
+                    textDecoration: "underline",
+                    textDecorationColor: dataset.backgroundColor,
+                    textDecorationThickness: "4px",
+                    textUnderlineOffset: "3px",
+                  }}
+                >
+                  <input
+                    type="checkbox"
+                    checked={datasetVisibility[index]}
+                    onChange={() => toggleDatasetVisibility(index)}
+                    className="mr-2"
+                  />
+                  {dataset.label}
+                </label>
+              ))}
+            </div>
+          </div>
+          
+          <div className="h-[calc(100%-2rem)]"> {/* Adjust height to account for heading */}
             <Bar data={getBarChartData()} options={barChartOptions} />
           </div>
         </div>
