@@ -195,6 +195,7 @@ const TableComponent = ({
                       ? "#000000" // Black background for Grand Total
                       : getLighterColor(getStateColor(state).bg, 0),
                   color: state.name === "Grand Total" ? "#FFFFFF" : "inherit", // White text for Grand Total
+                  fontWeight: state.name === "Grand Total" ? "bold" : "normal", // Bold font for Grand Total
                 }}
                 onMouseEnter={(e) =>
                   state.name !== "Grand Total" &&
