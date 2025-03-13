@@ -1,296 +1,294 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, ChangeEvent } from "react";
 import TableComponent from "@/app/components/TableComponent";
 import tableData from "@/app/data/tableData.json";
-import { TableData, State, Region, Branch } from "@/app/components/TableComponent";
+import HoverCard from "@/app/components/HoverCard";
+
+interface LoanApplication {
+  "Customer Name": string;
+  "Loan Amount Requested": string;
+  "Application Status": string;
+  "Branch Name": string;
+  PRODUCT: string;
+  State: string;
+}
+
+interface ULBRange {
+  id: string;
+  name: string;
+  min: number;
+  max: number;
+}
+
+interface FilterDropdownProps {
+  label: string;
+  value: string;
+  options: { id: string; name: string }[];
+  onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
+}
+
+interface ApplicationCountCardProps {
+  count: number;
+  items: LoanApplication[];
+  title: string;
+}
+
+const ULB_RANGES: ULBRange[] = [
+  { id: "range1", name: "₹0 - ₹500,000", min: 0, max: 500000 },
+  { id: "range2", name: "₹500,001 - ₹1,000,000", min: 500001, max: 1000000 },
+  { id: "range3", name: "₹1,000,001 - ₹2,000,000", min: 1000001, max: 2000000 },
+  { id: "range4", name: "₹2,000,001+", min: 2000001, max: Infinity },
+];
+
+const FilterDropdown = ({ label, value, options, onChange }: FilterDropdownProps) => (
+  <select
+    value={value}
+    onChange={onChange}
+    className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
+  >
+    <option value="">{label}</option>
+    {options.map((option) => (
+      <option key={option.id} value={option.id}>
+        {option.name}
+      </option>
+    ))}
+  </select>
+);
+
+const ApplicationCountCard = ({ count, items, title }: ApplicationCountCardProps) => (
+  <HoverCard
+    trigger={
+      <div className="text-2xl font-medium text-blue-600 cursor-pointer">
+        {count} Applications
+      </div>
+    }
+    content={
+      <div className="p-2">
+        <h3 className="font-bold border-b pb-2 mb-2">{title}</h3>
+        {items.map((item, index) => (
+          <div key={index} className="py-2 border-b border-gray-100 last:border-0">
+            <p className="font-medium">{item["Customer Name"]}</p>
+            <div className="grid grid-cols-2 text-sm gap-1">
+              <span className="text-gray-600">Amount:</span>
+              <span>₹{item["Loan Amount Requested"]}</span>
+              <span className="text-gray-600">Product:</span>
+              <span>{item.PRODUCT}</span>
+              <span className="text-gray-600">Status:</span>
+              <span>{item["Application Status"]}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    }
+  />
+);
 
 export default function TablePage() {
+  const [csvData, setCsvData] = useState<LoanApplication[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [selectedState, setSelectedState] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedBranch, setSelectedBranch] = useState("");
+  const [selectedULBRange, setSelectedULBRange] = useState("");
   const [expandedStates, setExpandedStates] = useState<Set<string>>(new Set());
   const [expandedRegions, setExpandedRegions] = useState<Set<string>>(new Set());
-  const [selectedState, setSelectedState] = useState<string>("");
-  const [selectedRegion, setSelectedRegion] = useState<string>("");
-  const [selectedBranch, setSelectedBranch] = useState<string>("");
 
-  const handleExpandAll = () => {
-    const allStateIds = new Set(
-      filteredData.tableData.map((state) => state.id)
-    );
-    const allRegionIds = new Set(
-      filteredData.tableData.flatMap((state) =>
-        state.regions.map((region) => region.id)
-      )
-    );
-    setExpandedStates(allStateIds);
-    setExpandedRegions(allRegionIds);
-  };
+  // Load CSV data
+  useEffect(() => {
+    const loadCsvData = async () => {
+      try {
+        const response = await fetch("/status.csv");
+        const text = await response.text();
+        const [headerLine, ...dataLines] = text.split("\n");
+        const headers = headerLine.split(",").map(h => h.trim());
 
-  const handleCollapseAll = () => {
-    setExpandedStates(new Set());
-    setExpandedRegions(new Set());
-  };
+        const parsedData = dataLines
+          .filter(line => line.trim())
+          .map(line => {
+            const values = line.split(",");
+            return headers.reduce((obj, header, index) => ({
+              ...obj,
+              [header]: values[index]?.trim() || ""
+            }), {} as LoanApplication);
+          });
 
-  const handleClearFilters = () => {
-    setSelectedState("");
-    setSelectedRegion("");
-    setSelectedBranch("");
-  };
+        setCsvData(parsedData);
+      } catch (error) {
+        console.error("Error loading CSV data:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-  const states = tableData.tableData.map((state) => ({
-    id: state.id,
-    name: state.name,
-  }));
-
-  const allRegions = useMemo(() => {
-    return tableData.tableData.flatMap((state) =>
-      state.regions.map((region) => ({
-        id: region.id,
-        name: region.name,
-        stateId: state.id,
-      }))
-    );
+    loadCsvData();
   }, []);
 
-  const allBranches = useMemo(() => {
-    return tableData.tableData.flatMap((state) =>
-      state.regions.flatMap((region) =>
-        region.branches.map((branch) => ({
+  // Auto-expand when selecting branch
+  useEffect(() => {
+    if (selectedBranch) {
+      const branch = allBranches.find(b => b.id === selectedBranch);
+      if (branch) {
+        setExpandedStates(new Set([branch.stateId]));
+        setExpandedRegions(new Set([branch.regionId]));
+      }
+    }
+  }, [selectedBranch]);
+
+  // Get all branches
+  const allBranches = useMemo(() => 
+    tableData.tableData.flatMap(state =>
+      state.regions.flatMap(region =>
+        region.branches.map(branch => ({
           id: branch.id,
           name: branch.name,
           regionId: region.id,
           stateId: state.id,
         }))
       )
-    );
-  }, []);
+    ),
+    []
+  );
 
-  const handleStateChange = (stateId: string) => {
-    setSelectedState(stateId);
-    if (selectedRegion) {
-      const region = allRegions.find((r) => r.id === selectedRegion);
-      if (region && region.stateId !== stateId) {
-        setSelectedRegion("");
-        setSelectedBranch("");
-      }
-    }
-    if (selectedBranch) {
-      const branch = allBranches.find((b) => b.id === selectedBranch);
-      if (branch && branch.stateId !== stateId) {
-        setSelectedBranch("");
-      }
-    }
+  // Filter loan data
+  const filteredLoanData = useMemo(() => {
+    if (!csvData.length) return [];
+
+    const stateFilter = selectedState.replace(/Regional Office/g, "").trim();
+    const activeRange = ULB_RANGES.find(r => r.id === selectedULBRange);
+
+    return csvData.filter(item => {
+      const amount = Number(item["Loan Amount Requested"]);
+      const branchMatch = selectedBranch ? item["Branch Name"] === selectedBranch : true;
+      const rangeMatch = activeRange ? amount >= activeRange.min && amount <= activeRange.max : true;
+      
+      return (
+        (!selectedState || item.State.includes(stateFilter)) &&
+        (!selectedRegion || item["Branch Name"].includes(selectedRegion)) &&
+        branchMatch &&
+        rangeMatch
+      );
+    });
+  }, [csvData, selectedState, selectedRegion, selectedBranch, selectedULBRange]);
+
+  // Filter table data for branch selection
+  const filteredTableData = useMemo(() => {
+    if (!selectedBranch) return tableData;
+
+    return {
+      tableData: tableData.tableData
+        .map(state => ({
+          ...state,
+          regions: state.regions
+            .map(region => ({
+              ...region,
+              branches: region.branches.filter(branch => branch.id === selectedBranch)
+            }))
+            .filter(region => region.branches.length > 0)
+        }))
+        .filter(state => state.regions.length > 0)
+    };
+  }, [selectedBranch]);
+
+  // Status breakdown
+  const statusBreakdown = useMemo(() => 
+    filteredLoanData.reduce((acc, item) => {
+      const status = item["Application Status"];
+      acc[status] = [...(acc[status] || []), item];
+      return acc;
+    }, {} as Record<string, LoanApplication[]>),
+  [filteredLoanData]);
+
+  // Clear filters
+  const handleClearFilters = () => {
+    setSelectedState("");
+    setSelectedRegion("");
+    setSelectedBranch("");
+    setSelectedULBRange("");
+    setExpandedStates(new Set());
+    setExpandedRegions(new Set());
   };
 
-  const handleRegionChange = (regionId: string) => {
-    setSelectedRegion(regionId);
-    if (regionId) {
-      const region = allRegions.find((r) => r.id === regionId);
-      if (region) {
-        setSelectedState(region.stateId);
-      }
-    } else if (!selectedBranch) {
-      setSelectedState("");
-    }
-    if (selectedBranch) {
-      const branch = allBranches.find((b) => b.id === selectedBranch);
-      if (branch && branch.regionId !== regionId) {
-        setSelectedBranch("");
-      }
-    }
-  };
-
-  const handleBranchChange = (branchId: string) => {
-    setSelectedBranch(branchId);
-    if (branchId) {
-      const branch = allBranches.find((b) => b.id === branchId);
-      if (branch) {
-        setSelectedState(branch.stateId);
-        setSelectedRegion(branch.regionId);
-      }
-    } else if (!selectedRegion) {
-      setSelectedRegion("");
-      if (!selectedState) {
-        setSelectedState("");
-      }
-    }
-  };
-
-  const regions = useMemo(() => {
-    if (selectedState) {
-      return allRegions.filter((region) => region.stateId === selectedState);
-    }
-    return allRegions;
-  }, [selectedState, allRegions]);
-
-  const branches = useMemo(() => {
-    if (selectedRegion) {
-      return allBranches.filter((branch) => branch.regionId === selectedRegion);
-    }
-    if (selectedState) {
-      return allBranches.filter((branch) => branch.stateId === selectedState);
-    }
-    return allBranches;
-  }, [selectedState, selectedRegion, allBranches]);
-
-  const filteredData: TableData = useMemo(() => {
-    if (selectedBranch) {
-      const branchInfo = allBranches.find((b) => b.id === selectedBranch);
-      if (branchInfo) {
-        const state = tableData.tableData.find((s) => s.id === branchInfo.stateId);
-        const region = state?.regions.find((r) => r.id === branchInfo.regionId);
-        const selectedBranchData = region?.branches.find((b) => b.id === selectedBranch);
-        if (state && region && selectedBranchData) {
-          const fakeState: State = {
-            ...state,
-            id: selectedBranchData.id,
-            name: selectedBranchData.name,
-            regions: [],
-            openingStock: selectedBranchData.openingStock,
-            applicationLogin: selectedBranchData.applicationLogin,
-            sanctionCount: selectedBranchData.sanctionCount,
-            sanctionAmt: selectedBranchData.sanctionAmt,
-            pniSanctionCount: selectedBranchData.pniSanctionCount,
-            pniSanctionAmount: selectedBranchData.pniSanctionAmount,
-            freshDisbCount: selectedBranchData.freshDisbCount,
-            freshDisbAmt: selectedBranchData.freshDisbAmt,
-            totalDisbAmt: selectedBranchData.totalDisbAmt,
-            diAmt: selectedBranchData.diAmt,
-            rejection: selectedBranchData.rejection,
-            cancellation: selectedBranchData.cancellation,
-            wip: selectedBranchData.wip,
-            originalStateName: state.name,
-          };
-          return { tableData: [fakeState] };
-        }
-      }
-      return { tableData: [] };
-    }
-
-    if (selectedRegion) {
-      const regionInfo = allRegions.find((r) => r.id === selectedRegion);
-      if (regionInfo) {
-        const state = tableData.tableData.find((s) => s.id === regionInfo.stateId);
-        const selectedRegionData = state?.regions.find((r) => r.id === selectedRegion);
-        if (state && selectedRegionData) {
-          const fakeState: State = {
-            ...state,
-            id: selectedRegionData.id,
-            name: selectedRegionData.name,
-            regions: selectedRegionData.branches.map((branch) => ({
-              ...branch,
-              branches: [],
-            })),
-            openingStock: selectedRegionData.openingStock,
-            applicationLogin: selectedRegionData.applicationLogin,
-            sanctionCount: selectedRegionData.sanctionCount,
-            sanctionAmt: selectedRegionData.sanctionAmt,
-            pniSanctionCount: selectedRegionData.pniSanctionCount,
-            pniSanctionAmount: selectedRegionData.pniSanctionAmount,
-            freshDisbCount: selectedRegionData.freshDisbCount,
-            freshDisbAmt: selectedRegionData.freshDisbAmt,
-            totalDisbAmt: selectedRegionData.totalDisbAmt,
-            diAmt: selectedRegionData.diAmt,
-            rejection: selectedRegionData.rejection,
-            cancellation: selectedRegionData.cancellation,
-            wip: selectedRegionData.wip,
-            originalStateName: state.name,
-          };
-          return { tableData: [fakeState] };
-        }
-      }
-      return { tableData: [] };
-    }
-
-    if (selectedState) {
-      const filtered = tableData.tableData.filter((state) => state.id === selectedState);
-      return { tableData: filtered };
-    }
-
-    return { tableData: tableData.tableData };
-  }, [selectedState, selectedRegion, selectedBranch]);
-
-  const isFilterApplied = selectedState || selectedRegion || selectedBranch;
+  const isFilterApplied = [selectedState, selectedRegion, selectedBranch, selectedULBRange]
+    .some(value => Boolean(value));
 
   return (
     <div className="container mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center space-x-4">
-          <h1 className="text-3xl font-bold">Table Page</h1>
-          <div>
-            <select
-              value={selectedState}
-              onChange={(e) => handleStateChange(e.target.value)}
-              className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
-            >
-              <option value="">Select State</option>
-              {states.map((state) => (
-                <option key={state.id} value={state.id}>
-                  {state.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <select
-              value={selectedRegion}
-              onChange={(e) => handleRegionChange(e.target.value)}
-              className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
-            >
-              <option value="">Select Region</option>
-              {regions.map((region) => (
-                <option key={region.id} value={region.id}>
-                  {region.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div>
-            <select
-              value={selectedBranch}
-              onChange={(e) => handleBranchChange(e.target.value)}
-              className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
-            >
-              <option value="">Select Branch</option>
-              {branches.map((branch) => (
-                <option key={branch.id} value={branch.id}>
-                  {branch.name}
-                </option>
-              ))}
-            </select>
-          </div>
-          {isFilterApplied && (
-            <button
-              onClick={handleClearFilters}
-              className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
-            >
-              Clear Filters
-            </button>
-          )}
-        </div>
-        <div>
-          <button
-            className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded mr-2 hover:bg-blue-200 cursor-pointer"
-            onClick={handleExpandAll}
-          >
-            Expand All
-          </button>
-          <button
-            className="bg-blue-100 text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-200 cursor-pointer"
-            onClick={handleCollapseAll}
-          >
-            Collapse All
-          </button>
-        </div>
-      </div>
-      <div className="bg-white p-6 rounded-lg shadow">
-        <TableComponent
-          data={filteredData}
-          expandedStates={expandedStates}
-          setExpandedStates={setExpandedStates}
-          expandedRegions={expandedRegions}
-          setExpandedRegions={setExpandedRegions}
+      <h1 className="text-2xl font-bold mb-6">Loan Applications Dashboard</h1>
+
+      {/* Filter Controls */}
+      <div className="flex flex-wrap gap-4 mb-6 items-center">
+        <FilterDropdown
+          label="Select State"
+          value={selectedState}
+          options={tableData.tableData.map(s => ({ id: s.id, name: s.name }))}
+          onChange={(e) => setSelectedState(e.target.value)}
         />
+
+        <FilterDropdown
+          label="Select Region"
+          value={selectedRegion}
+          options={tableData.tableData.flatMap(s => 
+            s.regions.map(r => ({ id: r.id, name: r.name }))
+          )}
+          onChange={(e) => setSelectedRegion(e.target.value)}
+        />
+
+        <FilterDropdown
+          label="Select Branch"
+          value={selectedBranch}
+          options={allBranches.map(b => ({ id: b.id, name: b.name }))}
+          onChange={(e) => setSelectedBranch(e.target.value)}
+        />
+
+        <FilterDropdown
+          label="Loan Amount Range"
+          value={selectedULBRange}
+          options={ULB_RANGES}
+          onChange={(e) => setSelectedULBRange(e.target.value)}
+        />
+
+        {isFilterApplied && (
+          <button
+            onClick={handleClearFilters}
+            className="bg-red-100 text-red-600 font-medium px-4 py-2 rounded hover:bg-red-200"
+          >
+            Clear Filters
+          </button>
+        )}
       </div>
+
+      {/* Data Display */}
+      {isLoading ? (
+        <div className="text-center py-4">Loading loan data...</div>
+      ) : (
+        <>
+          {/* Status Breakdown */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            {Object.entries(statusBreakdown).map(([status, items]) => (
+              <div key={status} className="bg-white p-4 rounded-lg shadow">
+                <h3 className="font-bold text-gray-700">{status}</h3>
+                <ApplicationCountCard
+                  count={items.length}
+                  items={items}
+                  title={`${status} Applications`}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Main Table */}
+          <div className="bg-white p-6 rounded-lg shadow">
+            <TableComponent
+              data={filteredTableData}
+              expandedStates={expandedStates}
+              setExpandedStates={setExpandedStates}
+              expandedRegions={expandedRegions}
+              setExpandedRegions={setExpandedRegions}
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

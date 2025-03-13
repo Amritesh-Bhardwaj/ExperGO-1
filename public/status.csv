@@ -1,0 +1,154 @@
+Application Number,Customer Name,Branch Name,State,Application Received Date,Last Login Acceptance Date,PRODUCT,SCHEME,Loan Purpose,Loan Amount Requested,Application Status,Sanctioned Amount,User Sanction Date, First Disbursal Date,Sourcing RM Name
+123456,Evelyn Brown,Delhi 2,Delhi Regional Office,19-11-2024,11-01-2025,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,1822753,Rejection,1822753,null,null,John Thomas
+123457,Michael Jackson,Delhi 1,Delhi Regional Office,14-12-2024,18-01-2025,Home Loan for Resale,HL- Resale,Purchase of Fresh Residential property,2565104,Rejection,2565104,null,null,Amelia Jones
+123458,Lucas Thomas,Delhi 3,Delhi Regional Office,22-11-2024,20-12-2024,Loan Against Property,Loan Against Property,Personal use ,2799771,Rejection,2799771,null,null,Henry Williams
+123459,Harper Gonzalez,Delhi 1,Delhi Regional Office,14-12-2024,03-01-2025,Loan Against Property,Loan Against Property,Personal use ,2423859,Rejection,2423859,20-12-24,null,Robert Johnson
+123460,Evelyn Thomas,Delhi 2,Delhi Regional Office,19-01-2025,08-11-2024,Loan Against Property,L1GP-SITARA - Sahyog,Business Purpose,2329378,Rejection,2329378,null,null,David Smith
+123461,Sophia Rodriguez,Delhi 1,Delhi Regional Office,07-12-2024,12-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,800398,Rejection,800398,null,null,Emma Martin
+123462,Harper Anderson,Delhi 3,Delhi Regional Office,19-01-2025,19-12-2024,Home Loan for Construction,HL- Self Construction,Home Construction,756848,Cancellation,756848,null,null,Alice Thomas
+123463,Emma Taylor,Delhi 3,Delhi Regional Office,28-01-2025,15-11-2024,Home Loan for Construction,HL- Self Construction,Home Construction,2264190,Disbursal,2264190,05-12-24,13-01-2025,Michael Garcia
+123464,Alexander Jones,Delhi 1,Delhi Regional Office,27-11-2024,08-12-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1GC),Purchase of Fresh Residential property,1835955,Rejection,1835955,null,null,Michael Jackson
+123465,William Jackson,Delhi 2,Delhi Regional Office,26-12-2024,27-01-2025,Home Loan for New Purchase,HL- New Purchase - ULB (H1AF),Purchase of Resale Residential property,1060776,Rejection,1060776,null,null,Amelia Jackson
+123466,Sophia Davis,Delhi 3,Delhi Regional Office,02-01-2025,20-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,205735,Rejection,205735,null,null,Harper Wilson
+123467,Emma Williams,Delhi 2,Delhi Regional Office,16-01-2025,23-11-2024,Loan Against Property,Loan Against Property,Personal use ,1418361,Disbursal,1418361,21-12-24,31-12-2024,Benjamin Martin
+123468,Robert Moore,Delhi 1,Delhi Regional Office,14-12-2024,29-12-2024,Home Loan for Resale,HL- Resale,Purchase of Fresh Residential property,100356,Rejection,100356,null,null,Henry Miller
+123469,Charlotte Gonzalez,Delhi 1,Delhi Regional Office,30-01-2025,13-11-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1GC),Purchase of Fresh Residential property,1864445,Rejection,1864445,null,null,Harper Garcia
+123470,Alice Rodriguez,Delhi 1,Delhi Regional Office,02-01-2025,02-12-2024,Loan Against Property,Loan Against Property,Personal use ,491936,Rejection,491936,null,null,William Smith
+123471,Benjamin Davis,Delhi 1,Delhi Regional Office,10-11-2024,02-11-2024,Home Loan for Resale,HL- Resale,Purchase of Fresh Residential property,2052114,Pre Approval,2052114,null,null,John Jackson
+123472,Harper Davis,Delhi 3,Delhi Regional Office,26-11-2024,22-12-2024,Loan Against Property,Loan Against Property,Balance Transfer,127071,Disbursal,127071,26-11-24,27-12-2024,Henry Garcia
+123473,Ava Jones,Delhi 2,Delhi Regional Office,18-12-2024,24-11-2024,Home Loan for Construction,HL- Self Construction,Home Construction,1482631,Rejection,1482631,null,null,John Brown
+123474,Evelyn Lopez,Delhi 2,Delhi Regional Office,09-01-2025,09-11-2024,Loan Against Property,Loan Against Property,Business Purpose,1453587,Rejection,1453587,null,null,James Gonzalez
+123475,Sophia Hernandez,Delhi 2,Delhi Regional Office,24-12-2024,25-12-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1AF),Purchase of Resale Residential property,1845963,Rejection,1845963,null,null,Henry Martin
+123476,Alice Rodriguez,Delhi 1,Delhi Regional Office,08-01-2025,14-11-2024,Loan Against Property,Loan Against Property,Personal use ,2077475,Rejection,2077475,21-11-24,null,Alice Taylor
+123477,Mia Wilson,Delhi 3,Delhi Regional Office,12-01-2025,27-01-2025,Loan Against Property,Loan Against Property,Personal use ,2965956,Cancellation,2965956,null,null,Emma Davis
+123478,Lucas Wilson,Delhi 2,Delhi Regional Office,24-12-2024,25-11-2024,Home Loan for Construction,HL- Self Construction,Purchase of Fresh Residential property,454840,Rejection,454840,null,null,Charlotte Moore
+123479,Amelia Brown,Delhi 1,Delhi Regional Office,08-01-2025,26-01-2025,Home Loan for Construction,H3GP-SITARA - Nirmaan,Home Construction,518999,Rejection,518999,null,null,Ava Moore
+123480,Alexander Miller,Delhi 2,Delhi Regional Office,11-01-2025,22-12-2024,Home Loan for Construction,HL- Self Construction,Home Construction,634312,Disbursal,634312,29-12-24,31-12-2024,Benjamin Martinez
+123481,Sophia Wilson,Delhi 3,Delhi Regional Office,02-01-2025,28-11-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Purchase of Resale Residential property,1998511,Rejection,1998511,null,null,Henry Moore
+123482,Evelyn Miller,Delhi 1,Delhi Regional Office,02-12-2024,01-11-2024,Home Loan for Construction,HL- Self Construction,Home Construction,676648,Rejection,676648,17-12-24,null,Alice Moore
+123483,Evelyn Martin,Delhi 3,Delhi Regional Office,14-12-2024,27-12-2024,Home Loan for Resale,HL- Resale,Balance Transfer,1429163,Rejection,1429163,null,null,James Brown
+123484,James Johnson,Delhi 3,Delhi Regional Office,21-01-2025,10-01-2025,Loan Against Property,Loan Against Property,Business Purpose,1009004,Rejection,1009004,null,null,Alexander Martin
+123485,Benjamin Hernandez,Delhi 2,Delhi Regional Office,09-11-2024,11-12-2024,Loan Against Property,Loan Against Property,Personal use ,1110782,Rejection,1110782,null,null,James Lopez
+123486,David Garcia,Delhi 2,Delhi Regional Office,26-12-2024,07-01-2025,Loan Against Property,L1GP-SITARA - Sahyog,Business Purpose,2826627,Rejection,2826627,null,null,Robert Miller
+123487,Robert Johnson,Delhi 2,Delhi Regional Office,28-01-2025,16-12-2024,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,2635778,Rejection,2635778,null,null,Amelia Smith
+123488,James Rodriguez,Delhi 2,Delhi Regional Office,13-11-2024,03-12-2024,Home Loan for Construction,HL- Self Construction,Home Construction,1923021,Rejection,1923021,null,null,Robert Gonzalez
+123489,Michael Martinez,Delhi 1,Delhi Regional Office,08-11-2024,11-11-2024,Loan Against Property,Loan Against Property,Business Purpose,2579202,Rejection,2579202,null,null,Henry Wilson
+123490,Benjamin Rodriguez,Delhi 3,Delhi Regional Office,11-11-2024,22-01-2025,Loan Against Property,Loan Against Property,Personal use ,2819155,Cancellation,2819155,null,null,Amelia Anderson
+123491,Charlotte Moore,Delhi 2,Delhi Regional Office,20-12-2024,20-01-2025,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,219116,Disbursal,219116,19-11-24,27-11-2024,Lucas Hernandez
+123492,Olivia Martinez,Delhi 3,Delhi Regional Office,20-01-2025,25-12-2024,Loan Against Property,Loan Against Property,Personal use ,1855418,Rejection,1855418,null,null,John Jackson
+123493,Ava Jones,Delhi 3,Delhi Regional Office,22-12-2024,14-12-2024,Home Loan for Construction,HL- Self Construction,Home Renovation / Improvement,155856,Rejection,155856,null,null,Henry Anderson
+123494,Mia Jones,Delhi 2,Delhi Regional Office,28-11-2024,27-12-2024,Loan Against Property,Loan Against Property,Business Purpose,1396610,Rejection,1396610,null,null,Robert Garcia
+123495,Michael Hernandez,Delhi 1,Delhi Regional Office,07-01-2025,17-11-2024,Loan Against Property,Loan Against Property,Personal use ,1936590,Rejection,1936590,null,null,Henry Miller
+123496,Sophia Jones,Delhi 1,Delhi Regional Office,03-11-2024,18-01-2025,Loan Against Property,L1GP-SITARA - Sahyog,Balance Transfer,2312288,Rejection,2312288,null,null,William Gonzalez
+123497,Evelyn Anderson,Delhi 1,Delhi Regional Office,25-11-2024,09-01-2025,Loan Against Property,Loan Against Property,Business Purpose,2008241,Rejection,2008241,null,null,William Taylor
+123498,Robert Johnson,Delhi 2,Delhi Regional Office,05-11-2024,06-12-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1GC),Home Renovation / Improvement,162646,Rejection,162646,null,null,David Martinez
+123499,Henry Smith,Delhi 1,Delhi Regional Office,30-12-2024,15-01-2025,Home Loan for Resale,HL- Resale,Purchase of Fresh Residential property,1993053,Rejection,1993053,null,null,Mia Miller
+123500,Benjamin Anderson,Delhi 1,Delhi Regional Office,03-11-2024,31-12-2024,Home Loan for Resale,HL- Resale,Purchase of Resale Residential property,2939839,Rejection,2939839,null,null,Olivia Moore
+123501,Harper Brown,Delhi 2,Delhi Regional Office,11-11-2024,30-01-2025,Loan Against Property,Loan Against Property,Personal use ,209657,Disbursal,209657,21-11-24,30-11-2024,Charlotte Wilson
+123502,Michael Brown,Delhi 2,Delhi Regional Office,05-01-2025,15-11-2024,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,2111419,Rejection,2111419,null,null,Robert Wilson
+123503,Sophia Anderson,Delhi 3,Delhi Regional Office,25-01-2025,29-12-2024,Home Loan for Construction,HL- Self Construction,Home Renovation / Improvement,2839196,Rejection,2839196,null,null,Michael Wilson
+123504,Ava Garcia,Delhi 2,Delhi Regional Office,14-12-2024,04-11-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1AF),Purchase of Fresh Residential property,534934,Rejection,534934,null,null,Alexander Martin
+123505,Sophia Martin,Delhi 2,Delhi Regional Office,20-11-2024,05-12-2024,Home Loan for Improvement or ,HL- Improvement,Home Renovation / Improvement,879716,Rejection,879716,null,null,David Rodriguez
+123506,Amelia Williams,Delhi 2,Delhi Regional Office,02-11-2024,22-01-2025,Loan Against Property,L1GP-SITARA - Sahyog,Business Purpose,2879951,Rejection,2879951,null,null,Michael Wilson
+123507,Sophia Garcia,Delhi 3,Delhi Regional Office,29-12-2024,20-11-2024,Loan Against Property,Loan Against Property,Personal use ,1242596,Rejection,1242596,null,null,Evelyn Martin
+123508,James Miller,Delhi 3,Delhi Regional Office,23-01-2025,08-11-2024,Home Loan for New Purchase,HL- New Purchase,Plot Purchase,2031041,Cancellation,2031041,null,null,Mia Williams
+123509,William Rodriguez,Delhi 3,Delhi Regional Office,01-01-2025,21-01-2025,Loan Against Property,Loan Against Property,Personal use ,2291612,Rejection,2291612,null,null,William Taylor
+123510,Mia Jackson,Delhi 1,Delhi Regional Office,14-11-2024,20-01-2025,Home Loan for Resale,HL- Resale,Purchase of Fresh Residential property,325335,Rejection,325335,null,null,Sophia Taylor
+123511,Lucas Garcia,Delhi 1,Delhi Regional Office,12-01-2025,23-12-2024,Home Loan for Improvement or ,HL- Improvement,Purchase of Fresh Residential property,2817666,Rejection,2817666,null,null,Charlotte Martin
+123512,William Thomas,Delhi 3,Delhi Regional Office,25-12-2024,17-01-2025,Home Loan for New Purchase,HL- New Purchase,Plot Purchase,2683629,Rejection,2683629,null,null,Ava Moore
+123513,Robert Jackson,Delhi 2,Delhi Regional Office,08-01-2025,17-12-2024,Home Loan for Improvement or ,HL- Extension,Home Construction,2339507,Cancellation,2339507,null,null,Mia Anderson
+123514,Sophia Smith,Delhi 2,Delhi Regional Office,22-01-2025,26-12-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1AF),Purchase of Fresh Residential property,348523,Rejection,348523,null,null,Amelia Anderson
+123515,Sophia Williams,Delhi 3,Delhi Regional Office,15-01-2025,29-12-2024,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,854331,Rejection,854331,null,null,Mia Johnson
+123516,John Lopez,Delhi 3,Delhi Regional Office,30-11-2024,06-11-2024,Loan Against Property,Loan Against Property,Personal use ,2601384,Disbursal,2601384,29-11-24,21-12-2024,Lucas Gonzalez
+123517,Sophia Jackson,Delhi 3,Delhi Regional Office,06-01-2025,15-11-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Balance Transfer,214424,Rejection,214424,null,null,Ava Thomas
+123518,Robert Williams,Delhi 1,Delhi Regional Office,06-01-2025,21-12-2024,Loan Against Property,Loan Against Property,Business Purpose,1667170,Rejection,1667170,null,null,James Williams
+123519,Evelyn Brown,Delhi 1,Delhi Regional Office,16-12-2024,11-11-2024,Home Loan for Construction,HL- Self Construction,Balance Transfer,854303,Rejection,854303,null,null,Sophia Williams
+123520,Sophia Garcia,Delhi 1,Delhi Regional Office,07-11-2024,14-12-2024,Loan Against Property,Loan Against Property,Business Purpose,144428,Rejection,144428,null,null,Sophia Johnson
+123521,Amelia Anderson,Delhi 2,Delhi Regional Office,06-12-2024,21-12-2024,Loan Against Property,Loan Against Property,Personal use ,2673781,Disbursal,2673781,28-01-25,30-01-2025,Amelia Wilson
+123522,John Martin,Delhi 1,Delhi Regional Office,13-11-2024,16-01-2025,Loan Against Property,Loan Against Property,Business Purpose,1300761,Rejection,1300761,null,null,Charlotte Martin
+123523,Alexander Martin,Delhi 1,Delhi Regional Office,02-12-2024,04-01-2025,Loan Against Property,Loan Against Property,Business Purpose,1679788,Rejection,1679788,null,null,Robert Williams
+123524,Lucas Brown,Delhi 3,Delhi Regional Office,26-12-2024,26-12-2024,Loan Against Property,Loan Against Property,Personal use ,1735696,Rejection,1735696,null,null,Lucas Smith
+123525,Henry Lopez,Delhi 2,Delhi Regional Office,19-12-2024,02-12-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1GC),Purchase of Resale Residential property,2160726,Rejection,2160726,null,null,Alexander Miller
+123526,Harper Moore,Delhi 3,Delhi Regional Office,25-12-2024,30-11-2024,Loan Against Property,Loan Against Property,Personal use ,1579346,Rejection,1579346,null,null,David Jones
+123527,Harper Moore,Delhi 3,Delhi Regional Office,01-12-2024,05-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,2010490,Disbursal,2010490,20-12-24,30-01-2025,Evelyn Lopez
+123528,John Martinez,Delhi 2,Delhi Regional Office,21-12-2024,12-11-2024,Home Loan for New Purchase,HL- New Purchase,Purchase of Resale Residential property,1175609,Rejection,1175609,null,null,Michael Martin
+123529,David Moore,Delhi 3,Delhi Regional Office,28-01-2025,04-01-2025,Home Loan for New Purchase,HL- New Purchase,Purchase of Resale Residential property,2307098,Rejection,2307098,null,null,David Martin
+123530,Amelia Wilson,Delhi 1,Delhi Regional Office,18-11-2024,09-11-2024,Home Loan for Construction,HL- Self Construction,Purchase of Fresh Residential property,281141,Rejection,281141,null,null,Lucas Anderson
+123531,Ava Thomas,Delhi 2,Delhi Regional Office,02-12-2024,29-12-2024,Loan Against Property,Loan Against Property,Personal use ,2588565,Disbursal,2588565,27-12-24,22-01-2025,Emma Gonzalez
+123532,Emma Brown,Delhi 2,Delhi Regional Office,08-01-2025,30-11-2024,Home Loan for Improvement or ,HL- Improvement,Home Extension,2253327,Rejection,2253327,null,null,James Lopez
+123533,Charlotte Johnson,Delhi 1,Delhi Regional Office,17-12-2024,07-12-2024,Home Loan for Improvement or ,HL- Extension,Purchase of Fresh Residential property,649040,Rejection,649040,null,null,Benjamin Miller
+123534,Emma Gonzalez,Delhi 3,Delhi Regional Office,01-12-2024,21-12-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Balance Transfer,2205079,Rejection,2205079,null,null,James Davis
+123535,Ava Martinez,Delhi 3,Delhi Regional Office,17-01-2025,19-11-2024,Loan Against Property,Loan Against Property,Personal use ,1427972,Rejection,1427972,null,null,Alice Thomas
+123536,Robert Martinez,Delhi 1,Delhi Regional Office,14-01-2025,28-01-2025,Loan Against Property,L1GP-SITARA - Sahyog,Business Purpose,1713033,Rejection,1713033,null,null,David Johnson
+123537,Emma Martin,Delhi 2,Delhi Regional Office,16-12-2024,21-11-2024,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,2338160,Rejection,2338160,null,null,Charlotte Brown
+123538,Charlotte Martinez,Delhi 2,Delhi Regional Office,05-11-2024,19-01-2025,Loan Against Property,L1GP-SITARA - Sahyog,Personal use ,1613946,Rejection,1613946,null,null,Lucas Martin
+123539,Benjamin Hernandez,Delhi 2,Delhi Regional Office,04-01-2025,23-12-2024,Loan Against Property,L1GP-SITARA - Sahyog,Personal use ,891303,Rejection,891303,null,null,Henry Lopez
+123540,Olivia Davis,Delhi 1,Delhi Regional Office,14-12-2024,30-12-2024,Home Loan for Construction,HL- Self Construction,Home Construction,941000,Rejection,941000,21-12-24,null,Michael Hernandez
+123541,Sophia Taylor,Delhi 2,Delhi Regional Office,08-12-2024,18-01-2025,Loan Against Property,Loan Against Property,Business Purpose,2193538,Disbursal,2193538,29-01-25,30-01-2025,John Jones
+123542,Lucas Miller,Delhi 1,Delhi Regional Office,22-11-2024,14-12-2024,Home Loan for Resale,H2GP-SITARA - Vikas,Purchase of Fresh Residential property,786964,Rejection,786964,null,null,David Johnson
+123543,Mia Taylor,Delhi 2,Delhi Regional Office,06-01-2025,11-11-2024,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,1989917,Rejection,1989917,null,null,John Martinez
+123544,Harper Williams,Delhi 1,Delhi Regional Office,16-11-2024,10-01-2025,Loan Against Property,Loan Against Property,Business Purpose,1395724,Rejection,1395724,null,null,Alexander Smith
+123545,Evelyn Wilson,Delhi 2,Delhi Regional Office,22-01-2025,19-01-2025,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,346069,Rejection,346069,null,null,David Lopez
+123546,William Lopez,Delhi 2,Delhi Regional Office,11-11-2024,15-12-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1AF),Purchase of Fresh Residential property,1826045,Rejection,1826045,null,null,Michael Miller
+123547,Lucas Davis,Delhi 1,Delhi Regional Office,01-11-2024,05-12-2024,Loan Against Property,Loan Against Property,Business Purpose,833354,Rejection,833354,null,null,John Brown
+123548,Robert Rodriguez,Delhi 1,Delhi Regional Office,10-11-2024,20-12-2024,Loan Against Property,Loan Against Property,Personal use ,2723590,Rejection,2723590,null,null,Evelyn Johnson
+123549,David Taylor,Delhi 2,Delhi Regional Office,23-12-2024,03-12-2024,Loan Against Property,Loan Against Property,Personal use ,2546488,Rejection,2546488,null,null,Ava Rodriguez
+123550,Mia Garcia,Delhi 1,Delhi Regional Office,09-01-2025,02-01-2025,Loan Against Property,Loan Against Property,Business Purpose,773827,Rejection,773827,null,null,David Smith
+123551,Olivia Wilson,Delhi 2,Delhi Regional Office,02-12-2024,04-01-2025,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Home Construction,2989636,Rejection,2989636,null,null,Ava Hernandez
+123552,Sophia Martin,Delhi 1,Delhi Regional Office,28-11-2024,08-12-2024,Loan Against Property,Loan Against Property,Business Purpose,213830,Rejection,213830,null,null,Mia Williams
+123553,Harper Thomas,Delhi 3,Delhi Regional Office,05-11-2024,30-11-2024,Loan Against Property,Loan Against Property,Personal use ,955444,Rejection,955444,null,null,Amelia Jackson
+123554,John Davis,Delhi 1,Delhi Regional Office,01-11-2024,27-01-2025,Loan Against Property,L1GP-SITARA - Sahyog,Business Purpose,951723,Rejection,951723,null,null,Sophia Williams
+123555,Ava Jones,Delhi 1,Delhi Regional Office,28-01-2025,05-01-2025,Loan Against Property,Loan Against Property,Business Purpose,530947,Rejection,530947,null,null,Harper Miller
+123556,John Miller,Delhi 3,Delhi Regional Office,13-11-2024,26-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,1078280,Rejection,1078280,null,null,Alexander Martin
+123557,Alice Anderson,Delhi 3,Delhi Regional Office,03-01-2025,11-12-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Purchase of Resale Residential property,284521,Rejection,284521,null,null,Michael Martin
+123558,Evelyn Hernandez,Delhi 3,Delhi Regional Office,06-01-2025,27-11-2024,Home Loan for Resale,HL- Resale,Balance Transfer,570865,Rejection,570865,28-12-24,null,William Davis
+123559,William Miller,Delhi 3,Delhi Regional Office,11-11-2024,11-01-2025,Loan Against Property,Loan Against Property,Balance Transfer,1141625,Rejection,1141625,null,null,David Garcia
+123560,Ava Martinez,Delhi 3,Delhi Regional Office,05-12-2024,07-12-2024,Loan Against Property,Loan Against Property,Personal use ,360697,Rejection,360697,null,null,James Lopez
+123561,Henry Thomas,Delhi 1,Delhi Regional Office,21-12-2024,06-11-2024,Loan Against Property,Loan Against Property,Business Purpose,2449014,Rejection,2449014,null,null,Mia Rodriguez
+123562,Harper Martinez,Delhi 3,Delhi Regional Office,18-12-2024,04-11-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Purchase of Fresh Residential property,337883,Rejection,337883,null,null,James Rodriguez
+123563,Benjamin Thomas,Delhi 3,Delhi Regional Office,28-12-2024,18-12-2024,Loan Against Property,Loan Against Property,Personal use ,2009053,Rejection,2009053,null,null,Henry Jones
+123564,William Jackson,Delhi 2,Delhi Regional Office,12-12-2024,06-11-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1AF),Balance Transfer,2300536,Rejection,2300536,null,null,Ava Garcia
+123565,John Rodriguez,Delhi 2,Delhi Regional Office,24-12-2024,15-01-2025,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,2259304,Rejection,2259304,null,null,Olivia Jackson
+123566,Charlotte Jackson,Delhi 1,Delhi Regional Office,01-11-2024,12-12-2024,Loan Against Property,Loan Against Property,Business Purpose,2222921,Rejection,2222921,null,null,John Martinez
+123567,James Jones,Delhi 2,Delhi Regional Office,23-01-2025,19-11-2024,Loan Against Property,Loan Against Property,Personal use ,1269176,Rejection,1269176,null,null,Evelyn Jackson
+123568,Amelia Garcia,Delhi 2,Delhi Regional Office,17-01-2025,18-01-2025,Loan Against Property,Loan Against Property,Business Purpose,2310929,Rejection,2310929,null,null,Ava Williams
+123569,Sophia Williams,Delhi 2,Delhi Regional Office,23-11-2024,17-12-2024,Home Loan for Construction,HL- Self Construction,Home Extension,405761,Rejection,405761,null,null,Benjamin Martin
+123570,Emma Wilson,Delhi 3,Delhi Regional Office,23-11-2024,16-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,1850938,Rejection,1850938,null,null,Robert Jones
+123571,Henry Martin,Delhi 1,Delhi Regional Office,13-11-2024,06-11-2024,Loan Against Property,L1GP-SITARA - Sahyog,Business Purpose,2191316,Rejection,2191316,null,null,Emma Martinez
+123572,Alexander Johnson,Delhi 1,Delhi Regional Office,23-12-2024,29-12-2024,Loan Against Property,Loan Against Property,Personal use ,1148489,Rejection,1148489,null,null,William Wilson
+123573,Lucas Thomas,Delhi 3,Delhi Regional Office,29-12-2024,03-12-2024,Loan Against Property,Loan Against Property,Personal use ,1954599,Disbursal,1954599,07-01-25,14-01-2025,Ava Smith
+123574,Benjamin Johnson,Delhi 3,Delhi Regional Office,25-11-2024,09-11-2024,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,2173387,Rejection,2173387,null,null,Benjamin Wilson
+123575,Charlotte Garcia,Delhi 2,Delhi Regional Office,13-11-2024,07-11-2024,Home Loan for Construction,H3GP-SITARA - Nirmaan,Home Construction,703178,Rejection,703178,null,null,James Rodriguez
+123576,Alice Thomas,Delhi 3,Delhi Regional Office,12-11-2024,13-12-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Purchase of Fresh Residential property,1990288,Rejection,1990288,null,null,Olivia Brown
+123577,Henry Johnson,Delhi 1,Delhi Regional Office,04-11-2024,05-12-2024,Home Loan for Resale,H2GP-SITARA - Vikas,Purchase of Fresh Residential property,434140,Rejection,434140,null,null,Ava Martinez
+123578,Robert Martin,Delhi 1,Delhi Regional Office,01-11-2024,22-11-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1GC),Purchase of Fresh Residential property,473250,Rejection,473250,30-12-24,null,Evelyn Martinez
+123579,Ava Brown,Delhi 2,Delhi Regional Office,22-12-2024,14-01-2025,Loan Against Property,Loan Against Property,Personal use ,1766546,Disbursal,1766546,24-12-24,28-12-2024,Emma Brown
+123580,Charlotte Miller,Delhi 1,Delhi Regional Office,19-12-2024,10-11-2024,Loan Against Property,Loan Against Property,Business Purpose,1597662,Rejection,1597662,null,null,James Anderson
+123581,Alice Jackson,Delhi 3,Delhi Regional Office,11-01-2025,13-11-2024,Home Loan for Construction,HL- Self Construction,Home Construction,2319436,Rejection,2319436,null,null,Mia Moore
+123582,Sophia Miller,Delhi 1,Delhi Regional Office,23-12-2024,04-01-2025,Home Loan for Improvement or ,HL- Improvement,Purchase of Fresh Residential property,1944353,Rejection,1944353,null,null,Henry Jones
+123583,Henry Smith,Delhi 2,Delhi Regional Office,08-12-2024,01-12-2024,Home Loan for Improvement or ,Home Improvement / Extension / Repair,Home Renovation / Improvement,1230224,Disbursal,1230224,28-12-24,31-12-2024,Olivia Brown
+123584,John Martinez,Delhi 2,Delhi Regional Office,16-12-2024,16-01-2025,Loan Against Property,Loan Against Property,Debt Consolidation,535369,Rejection,535369,null,null,Michael Hernandez
+123585,Michael Gonzalez,Delhi 3,Delhi Regional Office,11-01-2025,01-11-2024,Loan Against Property,Loan Against Property,Business Purpose,2561273,Disbursal,2561273,09-01-25,null,Sophia Moore
+123586,Emma Davis,Delhi 1,Delhi Regional Office,02-12-2024,13-11-2024,Home Loan for Resale,HL- Resale,Purchase of Fresh Residential property,262003,Rejection,262003,null,null,Olivia Gonzalez
+123587,Henry Lopez,Delhi 3,Delhi Regional Office,24-01-2025,03-11-2024,Loan Against Property,Loan Against Property,Personal use ,2215104,Rejection,2215104,null,null,Ava Gonzalez
+123588,Charlotte Garcia,Delhi 2,Delhi Regional Office,03-12-2024,05-12-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1AF),Balance Transfer,2051419,Rejection,2051419,null,null,Lucas Anderson
+123589,Sophia Wilson,Delhi 3,Delhi Regional Office,03-01-2025,11-11-2024,Loan Against Property,Loan Against Property,Personal use ,1335256,Rejection,1335256,null,null,David Wilson
+123590,Harper Jones,Delhi 2,Delhi Regional Office,23-12-2024,03-12-2024,Home Loan for Construction,HL- Self Construction,Home Construction,1505673,Rejection,1505673,null,null,Henry Anderson
+123591,Amelia Miller,Delhi 3,Delhi Regional Office,17-12-2024,03-11-2024,Home Loan for Construction,HL- Self Construction,Home Construction,889151,Rejection,889151,null,null,David Smith
+123592,Sophia Brown,Delhi 3,Delhi Regional Office,27-12-2024,16-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,1075707,Rejection,1075707,null,null,William Smith
+123593,Harper Taylor,Delhi 2,Delhi Regional Office,15-11-2024,18-11-2024,Loan Against Property,Loan Against Property,Business Purpose,2907976,Disbursal,2907976,25-01-25,29-01-2025,Charlotte Gonzalez
+123594,Benjamin Moore,Delhi 3,Delhi Regional Office,03-12-2024,02-11-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Purchase of Resale Residential property,1395991,Pre Approval,1395991,null,null,James Davis
+123595,Harper Jones,Delhi 2,Delhi Regional Office,07-01-2025,05-11-2024,Home Loan for Improvement or ,HL- Improvement,Home Renovation / Improvement,1000524,Rejection,1000524,null,null,Evelyn Jackson
+123596,Henry Garcia,Delhi 2,Delhi Regional Office,30-12-2024,27-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,283757,Post Approval,283757,25-01-25,null,Olivia Martinez
+123597,Michael Gonzalez,Delhi 2,Delhi Regional Office,06-11-2024,21-01-2025,Loan Against Property,Loan Against Property,Personal use ,2819026,Rejection,2819026,null,null,Ava Brown
+123598,John Martin,Delhi 3,Delhi Regional Office,13-11-2024,15-11-2024,Loan Against Property,Loan Against Property,Personal use ,2773154,Rejection,2773154,null,null,David Davis
+123599,James Rodriguez,Delhi 1,Delhi Regional Office,30-11-2024,16-11-2024,Home Loan for New Purchase,HL- New Purchase,Purchase of Fresh Residential property,2562224,Rejection,2562224,null,null,Henry Anderson
+123600,Robert Martin,Delhi 2,Delhi Regional Office,12-11-2024,05-12-2024,Loan Against Property,Loan Against Property,Personal use ,1396571,Rejection,1396571,null,null,Charlotte Martinez
+123601,Amelia Wilson,Delhi 3,Delhi Regional Office,19-11-2024,22-01-2025,Loan Against Property,Loan Against Property,Business Purpose,2753782,Rejection,2753782,null,null,John Hernandez
+123602,Evelyn Johnson,Delhi 1,Delhi Regional Office,25-01-2025,17-12-2024,Loan Against Property,Loan Against Property,Business Purpose,1783454,Rejection,1783454,null,null,Amelia Williams
+123603,William Jackson,Delhi 2,Delhi Regional Office,03-11-2024,27-01-2025,Loan Against Property,Loan Against Property,Personal use ,2090005,Rejection,2090005,null,null,David Thomas
+123604,Amelia Lopez,Delhi 3,Delhi Regional Office,12-01-2025,27-01-2025,Home Loan for Construction,HL- Self Construction,Home Construction,881903,Rejection,881903,null,null,Ava Martinez
+123605,Alice Martinez,Delhi 3,Delhi Regional Office,24-01-2025,01-12-2024,Home Loan for Improvement or ,HL- Improvement,Home Renovation / Improvement,981833,Rejection,981833,null,null,Michael Taylor
+123606,David Thomas,Delhi 1,Delhi Regional Office,14-12-2024,17-11-2024,Home Loan for New Purchase,HL- New Purchase - ULB (H1GC),Purchase of Fresh Residential property,1654517,Post Approval,1654517,30-01-25,null,Harper Anderson
+123607,Lucas Miller,Delhi 3,Delhi Regional Office,07-12-2024,11-12-2024,Home Loan for Plot Purchase + Construction,HL- Plot Purchase + Construction,Plot Purchase and Construction,2366832,Rejection,2366832,null,null,Alice Anderson
+123608,John Brown,Delhi 2,Delhi Regional Office,27-11-2024,02-01-2025,Loan Against Property,Loan Against Property,Personal use ,2317570,Disbursal,2317570,28-01-25,31-01-2025,Emma Martin
