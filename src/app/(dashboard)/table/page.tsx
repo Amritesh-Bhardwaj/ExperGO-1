@@ -35,10 +35,10 @@ interface ApplicationCountCardProps {
 }
 
 const ULB_RANGES: ULBRange[] = [
-  { id: "range1", name: "₹0 - ₹500,000", min: 0, max: 500000 },
-  { id: "range2", name: "₹500,001 - ₹1,000,000", min: 500001, max: 1000000 },
-  { id: "range3", name: "₹1,000,001 - ₹2,000,000", min: 1000001, max: 2000000 },
-  { id: "range4", name: "₹2,000,001+", min: 2000001, max: Infinity },
+  { id: "range1", name: "₹0 - ₹5 Lakhs", min: 0, max: 500000 },
+  { id: "range2", name: "₹5 Lakhs - ₹10 Lakhs", min: 500001, max: 1000000 },
+  { id: "range3", name: "₹10 Lakhs - ₹20 Lakhs", min: 1000001, max: 2000000 },
+  { id: "range4", name: "₹20 Lakhs+", min: 2000001, max: Infinity },
 ];
 
 const FilterDropdown = ({ label, value, options, onChange }: FilterDropdownProps) => (
