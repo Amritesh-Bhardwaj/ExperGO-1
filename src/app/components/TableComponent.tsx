@@ -1,9 +1,7 @@
 "use client";
-
-import React, { useCallback } from "react";
-import { ChevronDown, ChevronRight } from "lucide-react";
-
-// Define and export the interfaces
+import React, { useCallback, useState } from "react";
+import { ChevronDown, ChevronRight, X } from "lucide-react";
+import HoverCard from "./HoverCard";
 export interface Branch {
   id: string;
   name: string;
@@ -75,6 +73,132 @@ export interface TableComponentProps {
   setExpandedRegions: React.Dispatch<React.SetStateAction<Set<string>>>;
 }
 
+// New Delhi Regions and Branches Popup Component
+interface DelhiSubpartsPopupProps {
+  isOpen: boolean;
+  onClose: () => void;
+  regions: Region[];
+  totals: {
+    openingStock: number;
+    applicationLogin: number;
+    sanctionCount: number;
+    sanctionAmt: number;
+    pniSanctionCount: number;
+    rejection: number;
+    cancellation: number;
+    wip: number;
+  };
+}
+
+const DelhiSubpartsPopup = ({ isOpen, onClose, regions, totals }: DelhiSubpartsPopupProps) => {
+  const [expandedRegions, setExpandedRegions] = useState<Set<string>>(new Set());
+  
+  const toggleRegion = (regionId: string) => {
+    setExpandedRegions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(regionId)) {
+        newSet.delete(regionId);
+      } else {
+        newSet.add(regionId);
+      }
+      return newSet;
+    });
+  };
+  
+  if (!isOpen) return null;
+  
+  return (
+    <div className="fixed inset-0 backdrop-blur-sm  flex justify-center items-center z-50">
+      <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full max-h-[85vh]">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-xl font-bold">Delhi Regional Breakdown</h2>
+          <button 
+            onClick={onClose} 
+            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+          >
+            <X className="h-6 w-6" />
+          </button>
+        </div>
+        <div className="overflow-y-auto max-h-[70vh]">
+          <table className="min-w-full bg-white border border-gray-300">
+            <thead className="bg-gray-200 text-left sticky top-0 z-10">
+              <tr>
+                <th className="py-2 px-4 border-b">Region/Branch</th>
+                <th className="py-2 px-4 border-b">Opening Stock</th>
+                <th className="py-2 px-4 border-b">Application Login</th>
+                <th className="py-2 px-4 border-b">Sanction Count</th>
+                <th className="py-2 px-4 border-b">Sanction Amt (Cr)</th>
+                <th className="py-2 px-4 border-b">PNI Sanction Count</th>
+                <th className="py-2 px-4 border-b">Rejection</th>
+                <th className="py-2 px-4 border-b">Cancellation</th>
+                <th className="py-2 px-4 border-b">WIP</th>
+              </tr>
+            </thead> 
+            <tbody>
+              {regions.map((region) => (
+                <React.Fragment key={region.id}>
+                  {/* Region Row */}
+                  <tr 
+                    className="cursor-pointer bg-blue-50 hover:bg-blue-100"
+                    onClick={() => toggleRegion(region.id)}
+                  >
+                    <td className="py-2 px-4 border-b font-medium flex items-center">
+                      {region.name}
+                      {region.branches && region.branches.length > 0 && (
+                        expandedRegions.has(region.id) ? (
+                          <ChevronDown className="ml-2 h-4 w-4" />
+                        ) : (
+                          <ChevronRight className="ml-2 h-4 w-4" />
+                        )
+                      )}
+                    </td>
+                    <td className="py-2 px-4 border-b font-medium">{region.openingStock}</td>
+                    <td className="py-2 px-4 border-b font-medium">{region.applicationLogin}</td>
+                    <td className="py-2 px-4 border-b font-medium">{region.sanctionCount}</td>
+                    <td className="py-2 px-4 border-b font-medium">{region.sanctionAmt.toFixed(2)}</td>
+                    <td className="py-2 px-4 border-b font-medium">{region.pniSanctionCount}</td>
+                    <td className="py-2 px-4 border-b font-medium">{region.rejection}</td>
+                    <td className="py-2 px-4 border-b font-medium">{region.cancellation}</td>
+                    <td className="py-2 px-4 border-b font-medium">{region.wip}</td>
+                  </tr>
+                  
+                  {/* Branch Rows */}
+                  {expandedRegions.has(region.id) && region.branches.map((branch) => (
+                    <tr key={branch.id} className="bg-white hover:bg-gray-50">
+                      <td className="py-2 px-4 border-b pl-8">{branch.name}</td>
+                      <td className="py-2 px-4 border-b">{branch.openingStock}</td>
+                      <td className="py-2 px-4 border-b">{branch.applicationLogin}</td>
+                      <td className="py-2 px-4 border-b">{branch.sanctionCount}</td>
+                      <td className="py-2 px-4 border-b">{branch.sanctionAmt.toFixed(2)}</td>
+                      <td className="py-2 px-4 border-b">{branch.pniSanctionCount}</td>
+                      <td className="py-2 px-4 border-b">{branch.rejection}</td>
+                      <td className="py-2 px-4 border-b">{branch.cancellation}</td>
+                      <td className="py-2 px-4 border-b">{branch.wip}</td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              ))}
+            </tbody>
+            <tfoot className="bg-gray-100 sticky bottom-0">
+              <tr>
+                <td className="py-2 px-4 border-b font-bold">Total</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.openingStock}</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.applicationLogin}</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.sanctionCount}</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.sanctionAmt.toFixed(2)}</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.pniSanctionCount}</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.rejection}</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.cancellation}</td>
+                <td className="py-2 px-4 border-b font-bold">{totals.wip}</td>
+              </tr>
+            </tfoot>
+          </table>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const TableComponent = ({
   data,
   expandedStates,
@@ -82,6 +206,30 @@ const TableComponent = ({
   expandedRegions,
   setExpandedRegions,
 }: TableComponentProps) => {
+  // Add state for Delhi popup
+  const [showDelhiPopup, setShowDelhiPopup] = useState(false);
+  
+  // Find Delhi state and extract its data
+  const delhiState = data.tableData.find(
+    state => state.name.toLowerCase().includes("delhi") || 
+             (state.originalStateName && state.originalStateName.toLowerCase().includes("delhi"))
+  );
+  
+  // Get Delhi regions and totals for the popup
+  const delhiData = {
+    regions: delhiState?.regions || [],
+    totals: {
+      openingStock: delhiState?.openingStock || 0,
+      applicationLogin: delhiState?.applicationLogin || 0,
+      sanctionCount: delhiState?.sanctionCount || 0,
+      sanctionAmt: delhiState?.sanctionAmt || 0,
+      pniSanctionCount: delhiState?.pniSanctionCount || 0,
+      rejection: delhiState?.rejection || 0,
+      cancellation: delhiState?.cancellation || 0,
+      wip: delhiState?.wip || 0
+    }
+  };
+
   const toggleState = useCallback(
     (stateId: string) => {
       setExpandedStates((prev) => {
@@ -114,6 +262,12 @@ const TableComponent = ({
     },
     [setExpandedRegions]
   );
+
+  // Handler for Delhi Opening Stock click
+  const handleDelhiStockClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent the row expand/collapse
+    setShowDelhiPopup(true);
+  };
 
   const stateColorMap: { [key: string]: { bg: string; hover: string } } = {
     Delhi: {
@@ -182,7 +336,7 @@ const TableComponent = ({
             <th className="py-2 px-4 border-b">Rejection</th>
             <th className="py-2 px-4 border-b">Cancellation</th>
             <th className="py-2 px-4 border-b">WIP</th>
-          </tr>
+          </tr> 
         </thead>
         <tbody>
           {data.tableData.map((state) => (
@@ -213,6 +367,8 @@ const TableComponent = ({
                   )
                 }
                 onClick={() => !state.isBranch && toggleState(state.id)}
+                data-state-id={state.id}
+                data-state-name={state.name}
               >
                 <td className="py-2 px-4 border-b flex items-center">
                   {state.name}{" "}
@@ -224,7 +380,21 @@ const TableComponent = ({
                     )
                   )}
                 </td>
-                <td className="py-2 px-4 border-b">{state.openingStock}</td>
+                <td 
+                  className={`py-2 px-4 border-b ${
+                    state.name.toLowerCase().includes("delhi") ? 
+                    "cursor-pointer transition-colors" : ""
+                  }`} 
+                  onClick={(e) => 
+                    state.name.toLowerCase().includes("delhi") ? 
+                    handleDelhiStockClick(e) : undefined
+                  }
+                  title={state.name.toLowerCase().includes("delhi") ? 
+                    "Click to view Delhi regional breakdown" : undefined}
+                  data-column="openingStock"
+                >
+                  {state.openingStock}
+                </td>
                 <td className="py-2 px-4 border-b">{state.applicationLogin}</td>
                 <td className="py-2 px-4 border-b">{state.sanctionCount}</td>
                 <td className="py-2 px-4 border-b">{state.sanctionAmt.toFixed(2)}</td>
@@ -314,6 +484,14 @@ const TableComponent = ({
           ))}
         </tbody>
       </table>
+      
+      {/* Delhi Regions & Branches Popup */}
+      <DelhiSubpartsPopup 
+        isOpen={showDelhiPopup} 
+        onClose={() => setShowDelhiPopup(false)} 
+        regions={delhiData.regions}
+        totals={delhiData.totals}
+      />
     </div>
   );
 };
