@@ -1,7 +1,25 @@
 "use client";
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
 import HoverCard from "./HoverCard";
+
+export interface LoanApplication {
+  "Application Number": string;
+  "Customer Name": string;
+  "Branch Name": string;
+  "State": string;
+  "Application Received Date": string;
+  "Last Login Acceptance Date": string;
+  "PRODUCT": string;
+  "SCHEME": string;
+  "Loan Purpose": string;
+  "Loan Amount Requested": string;
+  "Application Status": string;
+  "Sanctioned Amount": string;
+  "User Sanction Date": string;
+  "First Disbursal Date": string;
+  "Sourcing RM Name": string;
+}
 export interface Branch {
   id: string;
   name: string;
@@ -71,6 +89,7 @@ export interface TableComponentProps {
   setExpandedStates: React.Dispatch<React.SetStateAction<Set<string>>>;
   expandedRegions: Set<string>;
   setExpandedRegions: React.Dispatch<React.SetStateAction<Set<string>>>;
+  csvData: LoanApplication[];
 }
 
 // New Delhi Regions and Branches Popup Component
@@ -88,111 +107,129 @@ interface DelhiSubpartsPopupProps {
     cancellation: number;
     wip: number;
   };
+  csvData: LoanApplication[];
 }
 
-const DelhiSubpartsPopup = ({ isOpen, onClose, regions, totals }: DelhiSubpartsPopupProps) => {
-  const [expandedRegions, setExpandedRegions] = useState<Set<string>>(new Set());
-  
-  const toggleRegion = (regionId: string) => {
-    setExpandedRegions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(regionId)) {
-        newSet.delete(regionId);
-      } else {
-        newSet.add(regionId);
-      }
-      return newSet;
+const DelhiSubpartsPopup = ({ isOpen, onClose, regions, totals, csvData }: DelhiSubpartsPopupProps) => {
+  const [selectedApplication, setSelectedApplication] = useState<LoanApplication | null>(null);
+  const allApplications = useMemo(() => {
+    const apps: Array<{
+      regionName: string;
+      branchName: string;
+      application: LoanApplication;
+    }> = [];
+    
+    regions.forEach(region => {
+      region.branches.forEach(branch => {
+        const branchApps = csvData.filter(app => app["Branch Name"] === branch.name);
+        branchApps.forEach(app => {
+          apps.push({
+            regionName: region.name,
+            branchName: branch.name,
+            application: app
+          });
+        });
+      });
     });
-  };
+    
+    return apps;
+  }, [regions, csvData]);
+  
+  console.log("All applications:", allApplications);
   
   if (!isOpen) return null;
   
   return (
-    <div className="fixed inset-0 backdrop-blur-sm  flex justify-center items-center z-50">
+    <div className="fixed inset-0 backdrop-blur-sm flex justify-center items-center z-50">
       <div className="bg-white rounded-lg shadow-lg p-6 max-w-5xl w-full max-h-[85vh]">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Delhi Regional Breakdown</h2>
-          <button 
-            onClick={onClose} 
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
-          >
+          <h2 className="text-xl font-bold">Delhi Loan Applications</h2>
+          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             <X className="h-6 w-6" />
           </button>
         </div>
+        
+        {/* Application Details Popup */}
+        {selectedApplication && (
+          <div className="mb-4 p-4 bg-blue-50 rounded-lg">
+            <div className="flex justify-between items-center mb-2">
+              <h3 className="font-bold">Application Details</h3>
+              <button onClick={() => setSelectedApplication(null)} className="text-gray-500 hover:text-gray-700">
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <p><span className="font-medium">Customer:</span> {selectedApplication["Customer Name"]}</p>
+                <p><span className="font-medium">Product:</span> {selectedApplication.PRODUCT}</p>
+                <p><span className="font-medium">Purpose:</span> {selectedApplication["Loan Purpose"]}</p>
+              </div>
+              <div>
+                <p><span className="font-medium">Amount:</span> ₹{selectedApplication["Loan Amount Requested"]}</p>
+                <p><span className="font-medium">Status:</span> {selectedApplication["Application Status"]}</p>
+                <p><span className="font-medium">RM:</span> {selectedApplication["Sourcing RM Name"]}</p>
+              </div>
+            </div>
+          </div>
+        )}
+        
         <div className="overflow-y-auto max-h-[70vh]">
           <table className="min-w-full bg-white border border-gray-300">
             <thead className="bg-gray-200 text-left sticky top-0 z-10">
               <tr>
-                <th className="py-2 px-4 border-b">Region/Branch</th>
-                <th className="py-2 px-4 border-b">Opening Stock</th>
-                <th className="py-2 px-4 border-b">Application Login</th>
-                <th className="py-2 px-4 border-b">Sanction Count</th>
-                <th className="py-2 px-4 border-b">Sanction Amt (Cr)</th>
-                <th className="py-2 px-4 border-b">PNI Sanction Count</th>
-                <th className="py-2 px-4 border-b">Rejection</th>
-                <th className="py-2 px-4 border-b">Cancellation</th>
-                <th className="py-2 px-4 border-b">WIP</th>
+                <th className="py-2 px-4 border-b">Region</th>
+                <th className="py-2 px-4 border-b">Branch</th>
+                <th className="py-2 px-4 border-b">Customer Name</th>
+                <th className="py-2 px-4 border-b">Loan Amount</th>
+                <th className="py-2 px-4 border-b">Product</th>
+                <th className="py-2 px-4 border-b">Status</th>
+                <th className="py-2 px-4 border-b">Actions</th>
               </tr>
-            </thead> 
+            </thead>
             <tbody>
-              {regions.map((region) => (
-                <React.Fragment key={region.id}>
-                  {/* Region Row */}
-                  <tr 
-                    className="cursor-pointer bg-blue-50 hover:bg-blue-100"
-                    onClick={() => toggleRegion(region.id)}
-                  >
-                    <td className="py-2 px-4 border-b font-medium flex items-center">
-                      {region.name}
-                      {region.branches && region.branches.length > 0 && (
-                        expandedRegions.has(region.id) ? (
-                          <ChevronDown className="ml-2 h-4 w-4" />
-                        ) : (
-                          <ChevronRight className="ml-2 h-4 w-4" />
-                        )
-                      )}
+              {allApplications.length > 0 ? (
+                allApplications.map((item, index) => (
+                  <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
+                    <td className="py-2 px-4 border-b">{item.regionName}</td>
+                    <td className="py-2 px-4 border-b">{item.branchName}</td>
+                    <td className="py-2 px-4 border-b">{item.application["Customer Name"]}</td>
+                    <td className="py-2 px-4 border-b">₹{item.application["Loan Amount Requested"]}</td>
+                    <td className="py-2 px-4 border-b">{item.application.PRODUCT}</td>
+                    <td className="py-2 px-4 border-b">
+                      <span className={`px-2 py-1 rounded text-xs ${
+                        item.application["Application Status"] === "Approved" ? "bg-green-100 text-green-800" :
+                        item.application["Application Status"] === "Rejected" ? "bg-red-100 text-red-800" :
+                        item.application["Application Status"] === "Pending" ? "bg-yellow-100 text-yellow-800" :
+                        "bg-blue-100 text-blue-800"
+                      }`}>
+                        {item.application["Application Status"]}
+                      </span>
                     </td>
-                    <td className="py-2 px-4 border-b font-medium">{region.openingStock}</td>
-                    <td className="py-2 px-4 border-b font-medium">{region.applicationLogin}</td>
-                    <td className="py-2 px-4 border-b font-medium">{region.sanctionCount}</td>
-                    <td className="py-2 px-4 border-b font-medium">{region.sanctionAmt.toFixed(2)}</td>
-                    <td className="py-2 px-4 border-b font-medium">{region.pniSanctionCount}</td>
-                    <td className="py-2 px-4 border-b font-medium">{region.rejection}</td>
-                    <td className="py-2 px-4 border-b font-medium">{region.cancellation}</td>
-                    <td className="py-2 px-4 border-b font-medium">{region.wip}</td>
+                    <td className="py-2 px-4 border-b">
+                      <button 
+                        onClick={() => setSelectedApplication(item.application)}
+                        className="bg-blue-100 text-blue-600 hover:bg-blue-200 py-1 px-2 rounded text-xs"
+                      >
+                        View Details
+                      </button>
+                    </td>
                   </tr>
-                  
-                  {/* Branch Rows */}
-                  {expandedRegions.has(region.id) && region.branches.map((branch) => (
-                    <tr key={branch.id} className="bg-white hover:bg-gray-50">
-                      <td className="py-2 px-4 border-b pl-8">{branch.name}</td>
-                      <td className="py-2 px-4 border-b">{branch.openingStock}</td>
-                      <td className="py-2 px-4 border-b">{branch.applicationLogin}</td>
-                      <td className="py-2 px-4 border-b">{branch.sanctionCount}</td>
-                      <td className="py-2 px-4 border-b">{branch.sanctionAmt.toFixed(2)}</td>
-                      <td className="py-2 px-4 border-b">{branch.pniSanctionCount}</td>
-                      <td className="py-2 px-4 border-b">{branch.rejection}</td>
-                      <td className="py-2 px-4 border-b">{branch.cancellation}</td>
-                      <td className="py-2 px-4 border-b">{branch.wip}</td>
-                    </tr>
-                  ))}
-                </React.Fragment>
-              ))}
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={7} className="py-4 px-4 text-center text-gray-500">
+                    No applications found for Delhi region
+                  </td>
+                </tr>
+              )}
             </tbody>
-            <tfoot className="bg-gray-100 sticky bottom-0">
-              <tr>
-                <td className="py-2 px-4 border-b font-bold">Total</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.openingStock}</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.applicationLogin}</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.sanctionCount}</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.sanctionAmt.toFixed(2)}</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.pniSanctionCount}</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.rejection}</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.cancellation}</td>
-                <td className="py-2 px-4 border-b font-bold">{totals.wip}</td>
-              </tr>
-            </tfoot>
           </table>
+          
+          {allApplications.length > 0 && (
+            <div className="mt-4 text-right text-sm text-gray-600">
+              Showing {allApplications.length} applications from {regions.length} regions
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -205,6 +242,7 @@ const TableComponent = ({
   setExpandedStates,
   expandedRegions,
   setExpandedRegions,
+  csvData
 }: TableComponentProps) => {
   // Add state for Delhi popup
   const [showDelhiPopup, setShowDelhiPopup] = useState(false);
@@ -491,6 +529,7 @@ const TableComponent = ({
         onClose={() => setShowDelhiPopup(false)} 
         regions={delhiData.regions}
         totals={delhiData.totals}
+        csvData={csvData}
       />
     </div>
   );

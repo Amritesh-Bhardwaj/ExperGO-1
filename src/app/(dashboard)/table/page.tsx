@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect, ChangeEvent } from "react";
 import TableComponent from "@/app/components/TableComponent";
 import tableData from "@/app/data/tableData.json";
-import HoverCard from "@/app/components/HoverCard";
+// import HoverCard from "@/app/components/HoverCard";
 
 interface LoanApplication {
   "Customer Name": string;
@@ -12,7 +12,17 @@ interface LoanApplication {
   "Branch Name": string;
   PRODUCT: string;
   State: string;
+  "Application Number": string;
+  "Application Received Date": string;
+  "Last Login Acceptance Date": string;
+  "SCHEME": string;
+  "Loan Purpose": string;
+  "Sanctioned Amount": string;
+  "User Sanction Date": string;
+  "First Disbursal Date": string;
+  "Sourcing RM Name": string;
 }
+
 
 interface ULBRange {
   id: string;
@@ -28,11 +38,11 @@ interface FilterDropdownProps {
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
-interface ApplicationCountCardProps {
-  count: number;
-  items: LoanApplication[];
-  title: string;
-}
+// interface ApplicationCountCardProps {
+//   count: number;
+//   items: LoanApplication[];
+//   title: string;
+// }
 
 const ULB_RANGES: ULBRange[] = [
   { id: "range1", name: "₹0 - ₹5 Lakhs", min: 0, max: 500000 },
@@ -56,33 +66,33 @@ const FilterDropdown = ({ label, value, options, onChange }: FilterDropdownProps
   </select>
 );
 
-const ApplicationCountCard = ({ count, items, title }: ApplicationCountCardProps) => (
-  <HoverCard
-    trigger={
-      <div className="text-2xl font-medium text-blue-600 cursor-pointer">
-        {count} Applications
-      </div>
-    }
-    content={
-      <div className="p-2">
-        <h3 className="font-bold border-b pb-2 mb-2">{title}</h3>
-        {items.map((item, index) => (
-          <div key={index} className="py-2 border-b border-gray-100 last:border-0">
-            <p className="font-medium">{item["Customer Name"]}</p>
-            <div className="grid grid-cols-2 text-sm gap-1">
-              <span className="text-gray-600">Amount:</span>
-              <span>₹{item["Loan Amount Requested"]}</span>
-              <span className="text-gray-600">Product:</span>
-              <span>{item.PRODUCT}</span>
-              <span className="text-gray-600">Status:</span>
-              <span>{item["Application Status"]}</span>
-            </div>
-          </div>
-        ))}
-      </div>
-    }
-  />
-);
+// const ApplicationCountCard = ({ count, items, title }: ApplicationCountCardProps) => (
+//   <HoverCard
+//     trigger={
+//       <div className="text-2xl font-medium text-blue-600 cursor-pointer">
+//         {count} Applications
+//       </div>
+//     }
+//     content={
+//       <div className="p-2">
+//         <h3 className="font-bold border-b pb-2 mb-2">{title}</h3>
+//         {items.map((item, index) => (
+//           <div key={index} className="py-2 border-b border-gray-100 last:border-0">
+//             <p className="font-medium">{item["Customer Name"]}</p>
+//             <div className="grid grid-cols-2 text-sm gap-1">
+//               <span className="text-gray-600">Amount:</span>
+//               <span>₹{item["Loan Amount Requested"]}</span>
+//               <span className="text-gray-600">Product:</span>
+//               <span>{item.PRODUCT}</span>
+//               <span className="text-gray-600">Status:</span>
+//               <span>{item["Application Status"]}</span>
+//             </div>
+//           </div>
+//         ))}
+//       </div>
+//     }
+//   />
+// );
 
 export default function TablePage() {
   const [csvData, setCsvData] = useState<LoanApplication[]>([]);
@@ -123,6 +133,7 @@ export default function TablePage() {
 
     loadCsvData();
   }, []);
+  // console.log("data ",csvData);
 
   // Auto-expand when selecting branch
   useEffect(() => {
@@ -263,7 +274,7 @@ export default function TablePage() {
         <div className="text-center py-4">Loading loan data...</div>
       ) : (
         <>
-          {/* Status Breakdown */}
+          {/* Status Breakdown
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
             {Object.entries(statusBreakdown).map(([status, items]) => (
               <div key={status} className="bg-white p-4 rounded-lg shadow">
@@ -275,7 +286,7 @@ export default function TablePage() {
                 />
               </div>
             ))}
-          </div>
+          </div> */}
 
           {/* Main Table */}
           <div className="bg-white p-6 rounded-lg shadow">
@@ -285,6 +296,7 @@ export default function TablePage() {
               setExpandedStates={setExpandedStates}
               expandedRegions={expandedRegions}
               setExpandedRegions={setExpandedRegions}
+              csvData={filteredLoanData} 
             />
           </div>
         </>
