@@ -100,7 +100,7 @@ const page = () => {
               <div className="flex justify-between items-center">
                 <div>
                   <div className="font-semibold text-sm">WIP</div>
-                  <div className="text-3xl font-bold my-1">1118.00</div>
+                  <div className="text-3xl font-bold my-1">1118</div>
                   <div className="text-xs">+9.5% from last month</div>
                 </div>
                 <button
@@ -113,27 +113,27 @@ const page = () => {
               {isWipDetailsVisible && (
                 <div className="mt-2 grid grid-cols-5 gap-2">
                   <div className="bg-yellow-200 p-1 rounded-md border border-black">
-                    <div className="font-semibold text-xs">Pending Approval</div>
+                    <div className="font-semibold text-xs">Pending for allocation by CPA</div>
                     <div className="text-xl font-bold my-1">322</div>
                     <div className="text-xs">+2.8% from last month</div>
                   </div>
                   <div className="bg-yellow-200 p-1 rounded-md border border-black">
-                    <div className="font-semibold text-xs">Under Review</div>
+                    <div className="font-semibold text-xs">WIP-CPA</div>
                     <div className="text-xl font-bold my-1">276</div>
                     <div className="text-xs">-5.9% from last month</div>
                   </div>
                   <div className="bg-yellow-200 p-1 rounded-md border border-black">
-                    <div className="font-semibold text-xs">Awaiting Documents</div>
+                    <div className="font-semibold text-xs">Sales Tray (Login Acceptance)</div>
                     <div className="text-xl font-bold my-1">185</div>
                     <div className="text-xs">+7.4% from last month</div>
                   </div>
                   <div className="bg-yellow-200 p-1 rounded-md border border-black">
-                    <div className="font-semibold text-xs">Verification Stage</div>
+                    <div className="font-semibold text-xs">Credit Pending (DDE & Reco Stage) </div>
                     <div className="text-xl font-bold my-1">291</div>
                     <div className="text-xs">-0.8% from last month</div>
                   </div>
                   <div className="bg-yellow-200 p-1 rounded-md border border-black">
-                    <div className="font-semibold text-xs">Final Processing</div>
+                    <div className="font-semibold text-xs">Sales Tray (DDE & RECO)</div>
                     <div className="text-xl font-bold my-1">44</div>
                     <div className="text-xs">+13.2% from last month</div>
                   </div>

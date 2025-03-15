@@ -38,12 +38,6 @@ interface FilterDropdownProps {
   onChange: (e: ChangeEvent<HTMLSelectElement>) => void;
 }
 
-// interface ApplicationCountCardProps {
-//   count: number;
-//   items: LoanApplication[];
-//   title: string;
-// }
-
 const ULB_RANGES: ULBRange[] = [
   { id: "range1", name: "₹0 - ₹5 Lakhs", min: 0, max: 500000 },
   { id: "range2", name: "₹5 Lakhs - ₹10 Lakhs", min: 500001, max: 1000000 },
@@ -66,34 +60,6 @@ const FilterDropdown = ({ label, value, options, onChange }: FilterDropdownProps
   </select>
 );
 
-// const ApplicationCountCard = ({ count, items, title }: ApplicationCountCardProps) => (
-//   <HoverCard
-//     trigger={
-//       <div className="text-2xl font-medium text-blue-600 cursor-pointer">
-//         {count} Applications
-//       </div>
-//     }
-//     content={
-//       <div className="p-2">
-//         <h3 className="font-bold border-b pb-2 mb-2">{title}</h3>
-//         {items.map((item, index) => (
-//           <div key={index} className="py-2 border-b border-gray-100 last:border-0">
-//             <p className="font-medium">{item["Customer Name"]}</p>
-//             <div className="grid grid-cols-2 text-sm gap-1">
-//               <span className="text-gray-600">Amount:</span>
-//               <span>₹{item["Loan Amount Requested"]}</span>
-//               <span className="text-gray-600">Product:</span>
-//               <span>{item.PRODUCT}</span>
-//               <span className="text-gray-600">Status:</span>
-//               <span>{item["Application Status"]}</span>
-//             </div>
-//           </div>
-//         ))}
-//       </div>
-//     }
-//   />
-// );
-
 export default function TablePage() {
   const [csvData, setCsvData] = useState<LoanApplication[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -103,6 +69,7 @@ export default function TablePage() {
   const [selectedULBRange, setSelectedULBRange] = useState("");
   const [expandedStates, setExpandedStates] = useState<Set<string>>(new Set());
   const [expandedRegions, setExpandedRegions] = useState<Set<string>>(new Set());
+  const [dynamicTableData, setDynamicTableData] = useState(tableData);
 
   // Load CSV data
   useEffect(() => {
@@ -126,6 +93,7 @@ export default function TablePage() {
         setCsvData(parsedData);
       } catch (error) {
         console.error("Error loading CSV data:", error);
+        setCsvData([]);
       } finally {
         setIsLoading(false);
       }
@@ -133,9 +101,7 @@ export default function TablePage() {
 
     loadCsvData();
   }, []);
-  // console.log("data ",csvData);
 
-  // Auto-expand when selecting branch
   useEffect(() => {
     if (selectedBranch) {
       const branch = allBranches.find(b => b.id === selectedBranch);
@@ -146,7 +112,6 @@ export default function TablePage() {
     }
   }, [selectedBranch]);
 
-  // Get all branches
   const allBranches = useMemo(() => 
     tableData.tableData.flatMap(state =>
       state.regions.flatMap(region =>
@@ -161,7 +126,6 @@ export default function TablePage() {
     []
   );
 
-  // Filter loan data
   const filteredLoanData = useMemo(() => {
     if (!csvData.length) return [];
 
@@ -182,12 +146,78 @@ export default function TablePage() {
     });
   }, [csvData, selectedState, selectedRegion, selectedBranch, selectedULBRange]);
 
-  // Filter table data for branch selection
+  useEffect(() => {
+    const newTableData = JSON.parse(JSON.stringify(tableData));
+    
+    const delhiStateIndex = newTableData.tableData.findIndex(
+      state => state.name.toLowerCase().includes("delhi")
+    );
+    
+    if (delhiStateIndex >= 0) {
+      const delhiApplications = filteredLoanData.filter(app => 
+        app.State.toLowerCase().includes("delhi")
+      );
+      
+      newTableData.tableData[delhiStateIndex].openingStock = delhiApplications.length;
+      
+      newTableData.tableData[delhiStateIndex].regions.forEach(region => {
+        const regionApps = delhiApplications.filter(app => 
+          app["Branch Name"].toLowerCase().includes(region.name.toLowerCase())
+        );
+        region.openingStock = regionApps.length;
+        
+        region.branches.forEach(branch => {
+          const branchApps = delhiApplications.filter(app => 
+            app["Branch Name"] === branch.name
+          );
+          branch.openingStock = branchApps.length;
+        });
+      });
+      
+      if (delhiApplications.length > 0) {
+        const rejectionCount = delhiApplications.filter(app => 
+          app["Application Status"] === "Rejection"
+        ).length;
+        
+        const cancellationCount = delhiApplications.filter(app => 
+          app["Application Status"] === "Cancellation"
+        ).length;
+        
+        const sanctionCount = delhiApplications.filter(app => 
+          app["Application Status"] === "Approved" || 
+          app["Application Status"] === "Disbursal"
+        ).length;
+        
+        newTableData.tableData[delhiStateIndex].rejection = rejectionCount;
+        newTableData.tableData[delhiStateIndex].cancellation = cancellationCount;
+        newTableData.tableData[delhiStateIndex].sanctionCount = sanctionCount;
+        
+        newTableData.tableData[delhiStateIndex].wip = 
+          delhiApplications.length - (rejectionCount + cancellationCount + sanctionCount);
+      }
+    }
+    
+    const grandTotalIndex = newTableData.tableData.findIndex(
+      state => state.name === "Grand Total"
+    );
+    
+    if (grandTotalIndex >= 0) {
+      const totalOpeningStock = newTableData.tableData
+        .filter(state => state.name !== "Grand Total")
+        .reduce((sum, state) => sum + state.openingStock, 0);
+        
+      newTableData.tableData[grandTotalIndex].openingStock = totalOpeningStock;
+      
+    }
+    
+    setDynamicTableData(newTableData);
+  }, [filteredLoanData]);
+
   const filteredTableData = useMemo(() => {
-    if (!selectedBranch) return tableData;
+    if (!selectedBranch) return dynamicTableData;
 
     return {
-      tableData: tableData.tableData
+      tableData: dynamicTableData.tableData
         .map(state => ({
           ...state,
           regions: state.regions
@@ -199,9 +229,8 @@ export default function TablePage() {
         }))
         .filter(state => state.regions.length > 0)
     };
-  }, [selectedBranch]);
+  }, [selectedBranch, dynamicTableData]);
 
-  // Status breakdown
   const statusBreakdown = useMemo(() => 
     filteredLoanData.reduce((acc, item) => {
       const status = item["Application Status"];
@@ -210,7 +239,6 @@ export default function TablePage() {
     }, {} as Record<string, LoanApplication[]>),
   [filteredLoanData]);
 
-  // Clear filters
   const handleClearFilters = () => {
     setSelectedState("");
     setSelectedRegion("");
@@ -274,19 +302,6 @@ export default function TablePage() {
         <div className="text-center py-4">Loading loan data...</div>
       ) : (
         <>
-          {/* Status Breakdown
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            {Object.entries(statusBreakdown).map(([status, items]) => (
-              <div key={status} className="bg-white p-4 rounded-lg shadow">
-                <h3 className="font-bold text-gray-700">{status}</h3>
-                <ApplicationCountCard
-                  count={items.length}
-                  items={items}
-                  title={`${status} Applications`}
-                />
-              </div>
-            ))}
-          </div> */}
 
           {/* Main Table */}
           <div className="bg-white p-6 rounded-lg shadow">
@@ -296,7 +311,8 @@ export default function TablePage() {
               setExpandedStates={setExpandedStates}
               expandedRegions={expandedRegions}
               setExpandedRegions={setExpandedRegions}
-              csvData={filteredLoanData} 
+              csvData={filteredLoanData}
+              selectedULBRange={selectedULBRange}
             />
           </div>
         </>
@@ -304,4 +320,3 @@ export default function TablePage() {
     </div>
   );
 }
-
