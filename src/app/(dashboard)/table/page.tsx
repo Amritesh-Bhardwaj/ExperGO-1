@@ -252,11 +252,11 @@ export default function TablePage() {
           <button
             onClick={handleClearFilters}
             className="bg-red-100 text-red-600 font-medium px-4 py-2 rounded hover:bg-red-200"
-          >
-            Clear Filters
-          </button>
-        )}
-      </div>
+          > 
+            Clear Filters 
+          </button> 
+        )} 
+      </div> 
 
       {/* Data Display */}
       {isLoading ? (
@@ -292,3 +292,4 @@ export default function TablePage() {
     </div>
   );
 }
+
