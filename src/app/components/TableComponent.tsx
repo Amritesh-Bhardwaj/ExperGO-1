@@ -411,8 +411,8 @@ const TableComponent = ({
       hover: "rgba(199, 199, 199, 0.7)",
     },
     Uttarakhand: {
-      bg: "rgba(50, 205, 50, 0.6)",
-      hover: "rgba(50, 205, 50, 0.7)",
+      bg: "rgba(180, 140, 100, 0.6)",
+    hover: "rgba(180, 140, 100, 0.7)",
     },
   };
 

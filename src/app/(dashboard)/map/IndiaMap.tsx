@@ -16,7 +16,7 @@ const stateColors: { [key: string]: string } = {
   "Madhya Pradesh": "rgba(153, 102, 255, 0.6)", // Purple
   Rajasthan: "rgba(255, 159, 64, 0.6)", // Orange
   "Uttar Pradesh": "rgba(199, 199, 199, 0.6)", // Gray
-  Uttarakhand: "rgba(50, 205, 50, 0.6)", // Lime Green
+  Uttarakhand: "rgba(180, 140, 100, 0.6)", // Brown (Tan)
 };
 
 // Define coordinates for the states (center points)
