@@ -316,8 +316,8 @@ export default function PieChartPage() {
             <h2 className="text-xl font-semibold mt-4 text-center">HL/LAP</h2>
           </div>
         </div>
-        <div className="grid justify-center">
-          {/* Rejection/Cancellation Pie Chart */}
+       {/* <div className="grid justify-center">
+          {/* Rejection/Cancellation Pie Chart 
           <div className="bg-white rounded-lg p-4 w-full max-w-xs">
             <div className="flex gap-4 mb-4">
               {["Rejection", "Cancellation"].map((label, index) => (
@@ -346,7 +346,7 @@ export default function PieChartPage() {
             </div>
             <h2 className="text-xl font-semibold mt-4 text-center">Rejection/Cancellation</h2>
           </div>
-        </div>
+        </div> }*/}
       </div>
     </div>
   );
