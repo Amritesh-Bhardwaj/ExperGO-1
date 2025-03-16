@@ -2,7 +2,8 @@
 
 import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
-import HoverCard from "./HoverCard";
+import HoverCard from "./HoverCard"; 
+
 
 export interface LoanApplication {
   "Application Number": string;
@@ -466,11 +467,7 @@ const TableComponent = ({
                   {state.name.toLowerCase().includes("delhi") ? (
                     <div className="flex items-center">
                       <span className="font-medium">{state.openingStock}</span>
-                      {/* {selectedULBRange && (
-                        <span className="ml-2 text-xs bg-blue-100 text-blue-600 px-1 py-0.5 rounded">
-                          Filtered
-                        </span>
-                      )} */}
+                      
                     </div>
                   ) : (
                     state.openingStock
