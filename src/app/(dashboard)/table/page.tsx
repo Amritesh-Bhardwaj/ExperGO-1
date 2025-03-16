@@ -3,6 +3,7 @@
 import { useState, useMemo, useEffect, ChangeEvent } from "react";
 import TableComponent from "@/app/components/TableComponent";
 import tableData from "@/app/data/tableData.json";
+import DataViewButtons from "@/app/components/TatFtrCard";
 // import HoverCard from "@/app/components/HoverCard";
 
 interface LoanApplication {
@@ -109,21 +110,41 @@ export default function TablePage() {
   const [expandedRegions, setExpandedRegions] = useState<Set<string>>(
     new Set()
   );
+  const [parsedTatData, setParsedTatData] = useState<Record<string, string>[]>([]);
+  const [parsedBookData, setParsedBookData] = useState<Record<string, string>[]>([]);
+  const [isExpanded, setIsExpanded] = useState(false);
+  const handleExpandToggle = () => {
+    if (isExpanded) {
+      // Collapse all
+      setExpandedStates(new Set());
+      setExpandedRegions(new Set());
+      setIsExpanded(false);
+    } else {
+      // Expand all
+      const allStateIds = tableData.tableData.map(state => state.id);
+      const allRegionIds = tableData.tableData.flatMap(state => 
+        state.regions ? state.regions.map(region => region.id) : []
+      );
+      setExpandedStates(new Set(allStateIds));
+      setExpandedRegions(new Set(allRegionIds));
+      setIsExpanded(true);
+    }
+  };
 
   // Load CSV data
   useEffect(() => {
-    const loadCsvData = async () => {
+    const loadAllCsvData = async () => {
       try {
-        const response = await fetch("/status.csv");
-        const text = await response.text();
-        const [headerLine, ...dataLines] = text.split("\n");
-        const headers = headerLine.split(",").map((h) => h.trim());
-
-        const parsedData = dataLines
+        // Load status.csv
+        const responseStatus = await fetch("/status.csv");
+        const textStatus = await responseStatus.text();
+        const [headerLineStatus, ...dataLinesStatus] = textStatus.split("\n");
+        const headersStatus = headerLineStatus.split(",").map((h) => h.trim());
+        const parsedStatusData = dataLinesStatus
           .filter((line) => line.trim())
           .map((line) => {
             const values = line.split(",");
-            return headers.reduce(
+            return headersStatus.reduce(
               (obj, header, index) => ({
                 ...obj,
                 [header]: values[index]?.trim() || "",
@@ -131,8 +152,44 @@ export default function TablePage() {
               {} as LoanApplication
             );
           });
+        setCsvData(parsedStatusData);
 
-        setCsvData(parsedData);
+        // Load Book1.csv
+        const responseBook = await fetch("/Book1.csv");
+        const textBook = await responseBook.text();
+        const [headerLineBook, ...dataLinesBook] = textBook.split("\n");
+        const headersBook = headerLineBook.split(",").map((h) => h.trim());
+        const parsedBookData = dataLinesBook
+          .filter((line) => line.trim())
+          .map((line) => {
+            const values = line.split(",");
+            return headersBook.reduce(
+              (obj, header, index) => ({
+                ...obj,
+                [header]: values[index]?.trim() || "",
+              }),
+              {} as Record<string, string>
+            );
+          });
+          setParsedBookData(parsedBookData);
+        // Load TAT-FTR.csv
+        const responseTat = await fetch("/TAT-FTR.csv");
+        const textTat = await responseTat.text();
+        const [headerLineTat, ...dataLinesTat] = textTat.split("\n");
+        const headersTat = headerLineTat.split(",").map((h) => h.trim());
+        const parsedTatData = dataLinesTat
+          .filter((line) => line.trim())
+          .map((line) => {
+            const values = line.split(",");
+            return headersTat.reduce(
+              (obj, header, index) => ({
+                ...obj,
+                [header]: values[index]?.trim() || "",
+              }),
+              {} as Record<string, string>
+            );
+          });
+          setParsedTatData(parsedTatData);
       } catch (error) {
         console.error("Error loading CSV data:", error);
       } finally {
@@ -140,7 +197,7 @@ export default function TablePage() {
       }
     };
 
-    loadCsvData();
+    loadAllCsvData();
   }, []);
   // console.log("data ",csvData);
 
@@ -300,6 +357,17 @@ export default function TablePage() {
           options={ULB_RANGES}
           onChange={(e) => setSelectedULBRange(e.target.value)}
         />
+
+<DataViewButtons 
+        parsedTatData={parsedTatData}
+        parsedBookData={parsedBookData}
+      />
+      <button
+    onClick={handleExpandToggle}
+    className="bg-purple-100 text-purple-600 font-medium px-4 py-2 rounded hover:bg-purple-200 transition-colors"
+  >
+    {isExpanded ? "Collapse All" : "Expand All"}
+  </button>
 
         {isFilterApplied && (
           <button
