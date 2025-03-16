@@ -1,9 +1,7 @@
 "use client";
-
-import React, { useCallback, useMemo, useState, useEffect } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
-import HoverCard from "./HoverCard"; 
-
+import HoverCard from "./HoverCard";
 
 export interface LoanApplication {
   "Application Number": string;
@@ -93,9 +91,9 @@ export interface TableComponentProps {
   expandedRegions: Set<string>;
   setExpandedRegions: React.Dispatch<React.SetStateAction<Set<string>>>;
   csvData: LoanApplication[];
-  selectedULBRange?: string;
 }
 
+// New Delhi Regions and Branches Popup Component
 interface DelhiSubpartsPopupProps {
   isOpen: boolean;
   onClose: () => void;
@@ -138,6 +136,8 @@ const DelhiSubpartsPopup = ({ isOpen, onClose, regions, totals, csvData }: Delhi
     return apps;
   }, [regions, csvData]);
   
+  console.log("All application > ", allApplications);
+  
   if (!isOpen) return null;
   
   return (
@@ -150,88 +150,142 @@ const DelhiSubpartsPopup = ({ isOpen, onClose, regions, totals, csvData }: Delhi
           </button>
         </div>
         
-        {/* Application Details Popup */}
+        {/* View details as a separate section (not looking good)*/}
         {selectedApplication && (
           <div className="mb-4 p-4 bg-blue-50 rounded-lg">
             <div className="flex justify-between items-center mb-2">
               <h3 className="font-bold">Application Details</h3>
               <button onClick={() => setSelectedApplication(null)} className="text-gray-500 hover:text-gray-700">
-                <X className="h-4 w-4" />
+          <X className="h-4 w-4" />
               </button>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p><span className="font-medium">Customer:</span> {selectedApplication["Customer Name"]}</p>
-                <p><span className="font-medium">Product:</span> {selectedApplication.PRODUCT}</p>
-                <p><span className="font-medium">Purpose:</span> {selectedApplication["Loan Purpose"]}</p>
-              </div>
-              <div>
-                <p><span className="font-medium">Amount:</span> ₹{selectedApplication["Loan Amount Requested"]}</p>
-                <p><span className="font-medium">Status:</span> {selectedApplication["Application Status"]}</p>
-                <p><span className="font-medium">RM:</span> {selectedApplication["Sourcing RM Name"]}</p>
-              </div>
-            </div>
+            <table className="min-w-full bg-white border border-gray-300">
+              <thead className="bg-gray-200 text-left">
+          <tr>
+            <th className="py-2 px-4 border-b">Field</th>
+            <th className="py-2 px-4 border-b">Value</th>
+          </tr>
+              </thead>
+              <tbody>
+          <tr className="bg-white">
+            <td className="py-2 px-4 border-b">Application Number</td>
+            <td className="py-2 px-4 border-b">{selectedApplication["Application Number"]}</td>
+          </tr>
+          <tr className="bg-gray-50">
+            <td className="py-2 px-4 border-b">Customer</td>
+            <td className="py-2 px-4 border-b">{selectedApplication["Customer Name"]}</td>
+          </tr>
+          <tr className="bg-white">
+            <td className="py-2 px-4 border-b">Received Date</td>
+            <td className="py-2 px-4 border-b">{selectedApplication["Application Received Date"]}</td>
+          </tr>
+          <tr className="bg-gray-50">
+            <td className="py-2 px-4 border-b">Last Login Date</td>
+            <td className="py-2 px-4 border-b">{selectedApplication["Last Login Acceptance Date"]}</td>
+          </tr>
+          <tr className="bg-white">
+            <td className="py-2 px-4 border-b">Product</td>
+            <td className="py-2 px-4 border-b">{selectedApplication.PRODUCT}</td>
+          </tr>
+          <tr className="bg-gray-50">
+            <td className="py-2 px-4 border-b">Scheme</td>
+            <td className="py-2 px-4 border-b">{selectedApplication.SCHEME}</td>
+          </tr>
+          <tr className="bg-white">
+            <td className="py-2 px-4 border-b">Purpose</td>
+            <td className="py-2 px-4 border-b">{selectedApplication["Loan Purpose"]}</td>
+          </tr>
+          <tr className="bg-gray-50">
+            <td className="py-2 px-4 border-b">Amount</td>
+            <td className="py-2 px-4 border-b">₹{selectedApplication["Loan Amount Requested"]}</td>
+          </tr>
+          <tr className="bg-white">
+            <td className="py-2 px-4 border-b">Status</td>
+            <td className="py-2 px-4 border-b">{selectedApplication["Application Status"]}</td>
+          </tr>
+          <tr className="bg-gray-50">
+            <td className="py-2 px-4 border-b">Sanctioned Amount</td>
+            <td className="py-2 px-4 border-b">₹{selectedApplication["Sanctioned Amount"]}</td>
+          </tr>
+         
+          <tr className="bg-white">
+            <td className="py-2 px-4 border-b">RM</td>
+            <td className="py-2 px-4 border-b">{selectedApplication["Sourcing RM Name"]}</td>
+          </tr>
+              </tbody>
+            </table>
           </div>
         )}
         
-        <div className="overflow-y-auto max-h-[70vh]">
-          <table className="min-w-full bg-white border border-gray-300">
-            <thead className="bg-gray-200 text-left sticky top-0 z-10">
-              <tr>
-                <th className="py-2 px-4 border-b">Region</th>
-                <th className="py-2 px-4 border-b">Branch</th>
-                <th className="py-2 px-4 border-b">Customer Name</th>
-                <th className="py-2 px-4 border-b">Loan Amount</th>
-                <th className="py-2 px-4 border-b">Product</th>
-                <th className="py-2 px-4 border-b">Status</th>
-                <th className="py-2 px-4 border-b">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {allApplications.length > 0 ? (
-                allApplications.map((item, index) => (
-                  <tr key={index} className={index % 2 === 0 ? "bg-white" : "bg-gray-50"}>
-                    <td className="py-2 px-4 border-b">{item.regionName}</td>
-                    <td className="py-2 px-4 border-b">{item.branchName}</td>
-                    <td className="py-2 px-4 border-b">{item.application["Customer Name"]}</td>
-                    <td className="py-2 px-4 border-b">₹{item.application["Loan Amount Requested"]}</td>
-                    <td className="py-2 px-4 border-b">{item.application.PRODUCT}</td>
-                    <td className="py-2 px-4 border-b">
-                      <span className={`px-2 py-1 rounded text-xs ${
-                        item.application["Application Status"] === "Approved" ? "bg-green-100 text-green-800" :
-                        item.application["Application Status"] === "Rejection" ? "bg-red-100 text-red-800" :
-                        item.application["Application Status"] === "Pending" ? "bg-yellow-100 text-yellow-800" :
-                        "bg-blue-100 text-blue-800"
-                      }`}>
-                        {item.application["Application Status"]}
-                      </span>
-                    </td>
-                    <td className="py-2 px-4 border-b">
-                      <button 
-                        onClick={() => setSelectedApplication(item.application)}
-                        className="bg-blue-100 text-blue-600 hover:bg-blue-200 py-1 px-2 rounded text-xs"
-                      >
-                        View Details
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={7} className="py-4 px-4 text-center text-gray-500">
-                    No applications found for Delhi region
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-          
-          {allApplications.length > 0 && (
-            <div className="mt-4 text-right text-sm text-gray-600">
-              Showing {allApplications.length} applications from {regions.length} regions
-            </div>
-          )}
-        </div>
+        <div className="p-4">
+  <div className="overflow-y-auto max-h-[70vh] rounded-lg shadow-sm border border-gray-200">
+    <table className="min-w-full divide-y divide-gray-200">
+      <thead className="bg-gray-50 text-left sticky top-0 z-10">
+        <tr>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Region</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Branch</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Product</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Received</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Last Login</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Scheme</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Purpose</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Sanctioned</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Sanction Date</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">Disbursal Date</th>
+          <th className="py-3 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">RM Name</th>
+        </tr>
+      </thead>
+      <tbody className="bg-white divide-y divide-gray-100">
+        {allApplications.length > 0 ? (
+          allApplications.map((item, index) => (
+            <tr 
+              key={index} 
+              className="hover:bg-gray-50 transition-colors"
+            >
+              <td className="py-3 px-4 text-sm text-gray-700">{item.regionName}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.branchName}</td>
+              <td className="py-3 px-4 text-sm font-medium text-gray-900">{item.application["Customer Name"]}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">₹{item.application["Loan Amount Requested"]}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application.PRODUCT}</td>
+              <td className="py-3 px-4 text-sm">
+                <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  item.application["Application Status"] === "Approved" ? "bg-green-100 text-green-800" :
+                  item.application["Application Status"] === "Rejected" ? "bg-red-100 text-red-800" :
+                  item.application["Application Status"] === "Pending" ? "bg-amber-100 text-amber-800" :
+                  "bg-blue-100 text-blue-800"
+                }`}>
+                  {item.application["Application Status"]}
+                </span>
+              </td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application["Application Received Date"]}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application["Last Login Acceptance Date"]}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application.SCHEME}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application["Loan Purpose"]}</td>
+              <td className="py-3 px-4 text-sm font-medium text-gray-900">₹{item.application["Sanctioned Amount"]}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application["User Sanction Date"]}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application["First Disbursal Date"]}</td>
+              <td className="py-3 px-4 text-sm text-gray-700">{item.application["Sourcing RM Name"]}</td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td colSpan={14} className="py-6 px-4 text-center text-gray-500">
+              <div className="flex flex-col items-center">
+                <svg className="w-8 h-8 text-gray-300 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <p>No applications found for Delhi region</p>
+              </div>
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+</div>
       </div>
     </div>
   );
@@ -243,51 +297,37 @@ const TableComponent = ({
   setExpandedStates,
   expandedRegions,
   setExpandedRegions,
-  csvData,
-  selectedULBRange
+  csvData
 }: TableComponentProps) => {
   // Add state for Delhi popup
   const [showDelhiPopup, setShowDelhiPopup] = useState(false);
-  const [modifiedData, setModifiedData] = useState<TableData>(data);
-  
-  useEffect(() => {
-    const newData = JSON.parse(JSON.stringify(data));
-    
-    const delhiStateIndex = newData.tableData.findIndex(
-      state => state.name.toLowerCase().includes("delhi") || 
-               (state.originalStateName && state.originalStateName.toLowerCase().includes("delhi"))
-    );
-    
-    if (delhiStateIndex >= 0) {
-      const delhiApplications = csvData.filter(app => 
-        app.State.toLowerCase().includes("delhi")
-      );
-      
-      newData.tableData[delhiStateIndex].openingStock = delhiApplications.length;
-      
-      newData.tableData[delhiStateIndex].regions.forEach(region => {
-        const regionApps = delhiApplications.filter(app => 
-          app["Branch Name"].toLowerCase().includes(region.name.toLowerCase())
-        );
-        region.openingStock = regionApps.length;
-        
-        region.branches.forEach(branch => {
-          const branchApps = delhiApplications.filter(app => 
-            app["Branch Name"] === branch.name
-          );
-          branch.openingStock = branchApps.length;
-        });
-      });
+
+  // Add this inside the TableComponent function
+  const countFilteredApplications = (name: string, type: 'state' | 'region' | 'branch') => {
+  if (!csvData.length) return 0;
+
+  return csvData.filter(item => {
+    if (type === 'state') {
+      // Count applications where the State matches (case-insensitive)
+      return item.State.toLowerCase().includes(name.toLowerCase());
+    } else if (type === 'region') {
+      // Count applications where the Branch Name includes the region name
+      return item["Branch Name"].toLowerCase().includes(name.toLowerCase());
+    } else if (type === 'branch') {
+      // Count applications where the Branch Name exactly matches the branch
+      return item["Branch Name"].toLowerCase() === name.toLowerCase();
     }
-    
-    setModifiedData(newData);
-  }, [data, csvData, selectedULBRange]);
+    return false;
+  }).length;
+};
   
-  const delhiState = modifiedData.tableData.find(
+  // Find Delhi state and extract its data
+  const delhiState = data.tableData.find(
     state => state.name.toLowerCase().includes("delhi") || 
              (state.originalStateName && state.originalStateName.toLowerCase().includes("delhi"))
   );
   
+  // Get Delhi regions and totals for the popup
   const delhiData = {
     regions: delhiState?.regions || [],
     totals: {
@@ -308,7 +348,7 @@ const TableComponent = ({
         const newSet = new Set(prev);
         if (newSet.has(stateId)) {
           newSet.delete(stateId);
-          modifiedData.tableData
+          data.tableData
             .find((state) => state.id === stateId)
             ?.regions.forEach((region) => newSet.delete(region.id));
         } else {
@@ -317,7 +357,7 @@ const TableComponent = ({
         return newSet;
       });
     },
-    [setExpandedStates, modifiedData.tableData]
+    [setExpandedStates, data.tableData]
   );
 
   const toggleRegion = useCallback(
@@ -335,8 +375,9 @@ const TableComponent = ({
     [setExpandedRegions]
   );
 
+  // Handler for Delhi Opening Stock click
   const handleDelhiStockClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); 
+    e.stopPropagation(); // Prevent the row expand/collapse
     setShowDelhiPopup(true);
   };
 
@@ -368,6 +409,10 @@ const TableComponent = ({
     "Uttar Pradesh": {
       bg: "rgba(199, 199, 199, 0.6)",
       hover: "rgba(199, 199, 199, 0.7)",
+    },
+    Uttarakhand: {
+      bg: "rgba(180, 140, 100, 0.6)",
+    hover: "rgba(180, 140, 100, 0.7)",
     },
   };
 
@@ -410,17 +455,17 @@ const TableComponent = ({
           </tr> 
         </thead>
         <tbody>
-          {modifiedData.tableData.map((state) => (
+          {data.tableData.map((state) => (
             <React.Fragment key={state.id}>
               <tr
                 className="cursor-pointer"
                 style={{
                   backgroundColor:
                     state.name === "Grand Total"
-                      ? "#000000" 
+                      ? "#000000" // Black background for Grand Total
                       : getLighterColor(getStateColor(state).bg, 0),
-                  color: state.name === "Grand Total" ? "#FFFFFF" : "inherit", 
-                  fontWeight: state.name === "Grand Total" ? "bold" : "normal", 
+                  color: state.name === "Grand Total" ? "#FFFFFF" : "inherit", // White text for Grand Total
+                  fontWeight: state.name === "Grand Total" ? "bold" : "normal", // Bold font for Grand Total
                 }}
                 onMouseEnter={(e) =>
                   state.name !== "Grand Total" &&
@@ -433,7 +478,7 @@ const TableComponent = ({
                   e.currentTarget.style.setProperty(
                     "background-color",
                     state.name === "Grand Total"
-                      ? "#000000" 
+                      ? "#000000" // Maintain black on mouse leave
                       : getLighterColor(getStateColor(state).bg, 0)
                   )
                 }
@@ -454,7 +499,7 @@ const TableComponent = ({
                 <td 
                   className={`py-2 px-4 border-b ${
                     state.name.toLowerCase().includes("delhi") ? 
-                    "cursor-pointer transition-colors " : ""
+                    "cursor-pointer transition-colors" : ""
                   }`} 
                   onClick={(e) => 
                     state.name.toLowerCase().includes("delhi") ? 
@@ -464,14 +509,8 @@ const TableComponent = ({
                     "Click to view Delhi regional breakdown" : undefined}
                   data-column="openingStock"
                 >
-                  {state.name.toLowerCase().includes("delhi") ? (
-                    <div className="flex items-center">
-                      <span className="font-medium">{state.openingStock}</span>
-                      
-                    </div>
-                  ) : (
-                    state.openingStock
-                  )}
+                  {(state.name.toLowerCase().includes("delhi"))?(csvData.filter(item => 
+      item.State.toLowerCase().includes("delhi")).length):state.openingStock}
                 </td>
                 <td className="py-2 px-4 border-b">{state.applicationLogin}</td>
                 <td className="py-2 px-4 border-b">{state.sanctionCount}</td>
@@ -513,7 +552,8 @@ const TableComponent = ({
                           )
                         )}
                       </td>
-                      <td className="py-2 px-4 border-b">{region.openingStock}</td>
+                      <td className="py-2 px-4 border-b">{countFilteredApplications(region.name, 'region')}
+                      </td>
                       <td className="py-2 px-4 border-b">{region.applicationLogin}</td>
                       <td className="py-2 px-4 border-b">{region.sanctionCount}</td>
                       <td className="py-2 px-4 border-b">{region.sanctionAmt.toFixed(2)}</td>
@@ -546,7 +586,7 @@ const TableComponent = ({
                           }
                         >
                           <td className="py-2 px-4 border-b pl-16">{branch.name}</td>
-                          <td className="py-2 px-4 border-b">{branch.openingStock}</td>
+                          <td className="py-2 px-4 border-b">{countFilteredApplications(branch.name, 'branch')}</td>
                           <td className="py-2 px-4 border-b">{branch.applicationLogin}</td>
                           <td className="py-2 px-4 border-b">{branch.sanctionCount}</td>
                           <td className="py-2 px-4 border-b">{branch.sanctionAmt.toFixed(2)}</td>
