@@ -9,7 +9,7 @@ import {
   LinearScale,
   Tooltip as ChartTooltip,
   Legend,
-  TooltipItem, // Added for correct typing
+  TooltipItem,
 } from "chart.js";
 import IndiaMap from "./IndiaMap";
 import tableData from "@/app/data/tableData.json";
@@ -62,11 +62,11 @@ interface TableData {
 
 export default function MapPage() {
   // Chart data series visibility state
-  const [datasetVisibility, setDatasetVisibility] = useState<boolean[]>([true, true]);
+  const [datasetVisibility, setDatasetVisibility] = useState<boolean[]>([true, true, true, true]);
 
   const processData = (data: TableData) => {
     const states = data.tableData
-      .filter((state) => state.id !== "grandTotal") // Exclude Grand Total
+      .filter((state) => state.id !== "grandTotal")
       .map((state) => ({
         ...state,
         ftr: state.wip,
@@ -116,14 +116,24 @@ export default function MapPage() {
   // Define dataset properties with colors for consistency
   const datasetProperties = [
     {
-      label: "Fresh Disbursement",
+      label: "Sanction Count",
+      backgroundColor: "rgba(255, 99, 132, 0.6)",
+      borderColor: "rgba(255, 99, 132, 1)",
+    },
+    {
+      label: "Sanction Amount",
       backgroundColor: "rgba(54, 162, 235, 0.6)",
       borderColor: "rgba(54, 162, 235, 1)",
     },
     {
-      label: "Sanction Count",
-      backgroundColor: "rgba(255, 99, 132, 0.6)",
-      borderColor: "rgba(255, 99, 132, 1)",
+      label: "Disbursement Count",
+      backgroundColor: "rgba(75, 192, 192, 0.6)",
+      borderColor: "rgba(75, 192, 192, 1)",
+    },
+    {
+      label: "Disbursement Amount",
+      backgroundColor: "rgba(255, 206, 86, 0.6)",
+      borderColor: "rgba(255, 206, 86, 1)",
     },
   ];
 
@@ -136,11 +146,10 @@ export default function MapPage() {
       // No state selected: Show all states
       labels = states.map((state) => state.name);
 
-      // Only add visible datasets
       if (datasetVisibility[0]) {
         datasets.push({
           label: datasetProperties[0].label,
-          data: states.map((state) => state.freshDisbursement),
+          data: states.map((state) => state.sanctionCount),
           backgroundColor: datasetProperties[0].backgroundColor,
           borderColor: datasetProperties[0].borderColor,
           borderWidth: 1,
@@ -150,16 +159,36 @@ export default function MapPage() {
       if (datasetVisibility[1]) {
         datasets.push({
           label: datasetProperties[1].label,
-          data: states.map((state) => state.sanctionCount),
+          data: states.map((state) => state.sanctionCount * 1000),
           backgroundColor: datasetProperties[1].backgroundColor,
           borderColor: datasetProperties[1].borderColor,
+          borderWidth: 1,
+        });
+      }
+
+      if (datasetVisibility[2]) {
+        datasets.push({
+          label: datasetProperties[2].label,
+          data: states.map((state) => state.freshDisbAmt / 1000),
+          backgroundColor: datasetProperties[2].backgroundColor,
+          borderColor: datasetProperties[2].borderColor,
+          borderWidth: 1,
+        });
+      }
+
+      if (datasetVisibility[3]) {
+        datasets.push({
+          label: datasetProperties[3].label,
+          data: states.map((state) => state.freshDisbAmt),
+          backgroundColor: datasetProperties[3].backgroundColor,
+          borderColor: datasetProperties[3].borderColor,
           borderWidth: 1,
         });
       }
     } else {
       const selectedStateData = states.find((state) => state.name === selectedState);
       if (!selectedStateData) {
-        return { labels: [], datasets: [] }; // Fallback
+        return { labels: [], datasets: [] };
       }
 
       if (selectedStateData.regions.length > 1) {
@@ -169,7 +198,7 @@ export default function MapPage() {
         if (datasetVisibility[0]) {
           datasets.push({
             label: datasetProperties[0].label,
-            data: selectedStateData.regions.map((region) => region.freshDisbAmt),
+            data: selectedStateData.regions.map((region) => region.sanctionCount),
             backgroundColor: datasetProperties[0].backgroundColor,
             borderColor: datasetProperties[0].borderColor,
             borderWidth: 1,
@@ -179,9 +208,29 @@ export default function MapPage() {
         if (datasetVisibility[1]) {
           datasets.push({
             label: datasetProperties[1].label,
-            data: selectedStateData.regions.map((region) => region.sanctionCount),
+            data: selectedStateData.regions.map((region) => region.sanctionCount * 1000),
             backgroundColor: datasetProperties[1].backgroundColor,
             borderColor: datasetProperties[1].borderColor,
+            borderWidth: 1,
+          });
+        }
+
+        if (datasetVisibility[2]) {
+          datasets.push({
+            label: datasetProperties[2].label,
+            data: selectedStateData.regions.map((region) => region.freshDisbAmt / 1000),
+            backgroundColor: datasetProperties[2].backgroundColor,
+            borderColor: datasetProperties[2].borderColor,
+            borderWidth: 1,
+          });
+        }
+
+        if (datasetVisibility[3]) {
+          datasets.push({
+            label: datasetProperties[3].label,
+            data: selectedStateData.regions.map((region) => region.freshDisbAmt),
+            backgroundColor: datasetProperties[3].backgroundColor,
+            borderColor: datasetProperties[3].borderColor,
             borderWidth: 1,
           });
         }
@@ -193,7 +242,7 @@ export default function MapPage() {
         if (datasetVisibility[0]) {
           datasets.push({
             label: datasetProperties[0].label,
-            data: region.branches.map((branch) => branch.freshDisbAmt),
+            data: region.branches.map((branch) => branch.sanctionCount),
             backgroundColor: datasetProperties[0].backgroundColor,
             borderColor: datasetProperties[0].borderColor,
             borderWidth: 1,
@@ -203,9 +252,29 @@ export default function MapPage() {
         if (datasetVisibility[1]) {
           datasets.push({
             label: datasetProperties[1].label,
-            data: region.branches.map((branch) => branch.sanctionCount),
+            data: region.branches.map((branch) => branch.sanctionCount * 1000),
             backgroundColor: datasetProperties[1].backgroundColor,
             borderColor: datasetProperties[1].borderColor,
+            borderWidth: 1,
+          });
+        }
+
+        if (datasetVisibility[2]) {
+          datasets.push({
+            label: datasetProperties[2].label,
+            data: region.branches.map((branch) => branch.freshDisbAmt / 1000),
+            backgroundColor: datasetProperties[2].backgroundColor,
+            borderColor: datasetProperties[2].borderColor,
+            borderWidth: 1,
+          });
+        }
+
+        if (datasetVisibility[3]) {
+          datasets.push({
+            label: datasetProperties[3].label,
+            data: region.branches.map((branch) => branch.freshDisbAmt),
+            backgroundColor: datasetProperties[3].backgroundColor,
+            borderColor: datasetProperties[3].borderColor,
             borderWidth: 1,
           });
         }
@@ -219,11 +288,13 @@ export default function MapPage() {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: false }, // Hide default legend since we're using custom checkboxes
+      legend: { display: false },
       tooltip: {
         callbacks: {
-          label: function (tooltipItem: TooltipItem<"bar">) { // Updated to use TooltipItem<"bar">
-            return `${tooltipItem.dataset.label}: ${tooltipItem.parsed.y}`;
+          label: function (tooltipItem: TooltipItem<"bar">) {
+            const datasetLabel = tooltipItem.dataset.label || 'Unknown';
+            const value = tooltipItem.parsed.y;
+            return `${datasetLabel}: ${datasetLabel.includes('Amount') ? `₹${value.toLocaleString()}` : value}`;
           },
         },
       },
@@ -245,13 +316,13 @@ export default function MapPage() {
           },
         },
         afterFit: function (scale: { height: number }) {
-          scale.height = 80; // Add more space for the rotated labels
+          scale.height = 80;
         },
       },
     },
     layout: {
       padding: {
-        bottom: 10, // Add some bottom padding
+        bottom: 10,
       },
     },
   };
@@ -271,7 +342,7 @@ export default function MapPage() {
 
       {/* Right Section - 40% */}
       <div className="w-2/5 pl-4 flex flex-col h-full">
-        {/* Top Section (KPIs) - 40% instead of 50% */}
+        {/* Top Section (KPIs) - 40% */}
         <div className="bg-white rounded-lg p-2 mb-2 h-[40%] overflow-hidden">
           <h2 className="text-2xl font-bold mb-2">Key Metrics</h2>
           <div className="flex justify-between items-center gap-2 h-full overflow-hidden">
@@ -299,13 +370,13 @@ export default function MapPage() {
           </div>
         </div>
 
-        {/* Bottom Section (Bar Graph) - 60% instead of 50% */}
+        {/* Bottom Section (Bar Graph) - 60% */}
         <div className="bg-white rounded-lg p-2 h-[60%] overflow-hidden">
           <div className="flex justify-between items-center mb-1">
-            <h2 className="text-lg font-bold">Disbursement & Sanction</h2>
+            <h2 className="text-lg font-bold">Sanctions & Disbursements</h2>
 
             {/* Custom Legend with Checkboxes */}
-            <div className="flex gap-4">
+            <div className="flex gap-4 flex-wrap">
               {datasetProperties.map((dataset, index) => (
                 <label
                   key={index}
