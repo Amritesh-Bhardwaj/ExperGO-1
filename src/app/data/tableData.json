@@ -1620,7 +1620,13 @@
         "diAmt": 35.04,
         "rejection": 33,
         "cancellation": 39,
+        "ftr": 1110.22,
         "wip": 1118,
+        "pendingForAllocationByCPA": 248,
+        "wipCPA": 243,
+        "salesTrayLoginAcceptance": 234,
+        "creditPendingDDERecoStage": 227,
+        "salesTrayDDERECO": 166,
         "regions": []
       }
     ]
