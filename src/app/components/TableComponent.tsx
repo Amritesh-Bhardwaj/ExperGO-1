@@ -1,7 +1,9 @@
 "use client";
-import React, { useCallback, useMemo, useState } from "react";
+
+import React, { useCallback, useMemo, useState, useEffect } from "react";
 import { ChevronDown, ChevronRight, X } from "lucide-react";
-import HoverCard from "./HoverCard";
+import HoverCard from "./HoverCard"; 
+
 
 export interface LoanApplication {
   "Application Number": string;
@@ -20,6 +22,7 @@ export interface LoanApplication {
   "First Disbursal Date": string;
   "Sourcing RM Name": string;
 }
+
 export interface Branch {
   id: string;
   name: string;
@@ -90,9 +93,9 @@ export interface TableComponentProps {
   expandedRegions: Set<string>;
   setExpandedRegions: React.Dispatch<React.SetStateAction<Set<string>>>;
   csvData: LoanApplication[];
+  selectedULBRange?: string;
 }
 
-// New Delhi Regions and Branches Popup Component
 interface DelhiSubpartsPopupProps {
   isOpen: boolean;
   onClose: () => void;
@@ -134,8 +137,6 @@ const DelhiSubpartsPopup = ({ isOpen, onClose, regions, totals, csvData }: Delhi
     
     return apps;
   }, [regions, csvData]);
-  
-  console.log("All applications:", allApplications);
   
   if (!isOpen) return null;
   
@@ -198,7 +199,7 @@ const DelhiSubpartsPopup = ({ isOpen, onClose, regions, totals, csvData }: Delhi
                     <td className="py-2 px-4 border-b">
                       <span className={`px-2 py-1 rounded text-xs ${
                         item.application["Application Status"] === "Approved" ? "bg-green-100 text-green-800" :
-                        item.application["Application Status"] === "Rejected" ? "bg-red-100 text-red-800" :
+                        item.application["Application Status"] === "Rejection" ? "bg-red-100 text-red-800" :
                         item.application["Application Status"] === "Pending" ? "bg-yellow-100 text-yellow-800" :
                         "bg-blue-100 text-blue-800"
                       }`}>
@@ -242,18 +243,51 @@ const TableComponent = ({
   setExpandedStates,
   expandedRegions,
   setExpandedRegions,
-  csvData
+  csvData,
+  selectedULBRange
 }: TableComponentProps) => {
   // Add state for Delhi popup
   const [showDelhiPopup, setShowDelhiPopup] = useState(false);
+  const [modifiedData, setModifiedData] = useState<TableData>(data);
   
-  // Find Delhi state and extract its data
-  const delhiState = data.tableData.find(
+  useEffect(() => {
+    const newData = JSON.parse(JSON.stringify(data));
+    
+    const delhiStateIndex = newData.tableData.findIndex(
+      state => state.name.toLowerCase().includes("delhi") || 
+               (state.originalStateName && state.originalStateName.toLowerCase().includes("delhi"))
+    );
+    
+    if (delhiStateIndex >= 0) {
+      const delhiApplications = csvData.filter(app => 
+        app.State.toLowerCase().includes("delhi")
+      );
+      
+      newData.tableData[delhiStateIndex].openingStock = delhiApplications.length;
+      
+      newData.tableData[delhiStateIndex].regions.forEach(region => {
+        const regionApps = delhiApplications.filter(app => 
+          app["Branch Name"].toLowerCase().includes(region.name.toLowerCase())
+        );
+        region.openingStock = regionApps.length;
+        
+        region.branches.forEach(branch => {
+          const branchApps = delhiApplications.filter(app => 
+            app["Branch Name"] === branch.name
+          );
+          branch.openingStock = branchApps.length;
+        });
+      });
+    }
+    
+    setModifiedData(newData);
+  }, [data, csvData, selectedULBRange]);
+  
+  const delhiState = modifiedData.tableData.find(
     state => state.name.toLowerCase().includes("delhi") || 
              (state.originalStateName && state.originalStateName.toLowerCase().includes("delhi"))
   );
   
-  // Get Delhi regions and totals for the popup
   const delhiData = {
     regions: delhiState?.regions || [],
     totals: {
@@ -274,7 +308,7 @@ const TableComponent = ({
         const newSet = new Set(prev);
         if (newSet.has(stateId)) {
           newSet.delete(stateId);
-          data.tableData
+          modifiedData.tableData
             .find((state) => state.id === stateId)
             ?.regions.forEach((region) => newSet.delete(region.id));
         } else {
@@ -283,7 +317,7 @@ const TableComponent = ({
         return newSet;
       });
     },
-    [setExpandedStates, data.tableData]
+    [setExpandedStates, modifiedData.tableData]
   );
 
   const toggleRegion = useCallback(
@@ -301,9 +335,8 @@ const TableComponent = ({
     [setExpandedRegions]
   );
 
-  // Handler for Delhi Opening Stock click
   const handleDelhiStockClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent the row expand/collapse
+    e.stopPropagation(); 
     setShowDelhiPopup(true);
   };
 
@@ -377,17 +410,17 @@ const TableComponent = ({
           </tr> 
         </thead>
         <tbody>
-          {data.tableData.map((state) => (
+          {modifiedData.tableData.map((state) => (
             <React.Fragment key={state.id}>
               <tr
                 className="cursor-pointer"
                 style={{
                   backgroundColor:
                     state.name === "Grand Total"
-                      ? "#000000" // Black background for Grand Total
+                      ? "#000000" 
                       : getLighterColor(getStateColor(state).bg, 0),
-                  color: state.name === "Grand Total" ? "#FFFFFF" : "inherit", // White text for Grand Total
-                  fontWeight: state.name === "Grand Total" ? "bold" : "normal", // Bold font for Grand Total
+                  color: state.name === "Grand Total" ? "#FFFFFF" : "inherit", 
+                  fontWeight: state.name === "Grand Total" ? "bold" : "normal", 
                 }}
                 onMouseEnter={(e) =>
                   state.name !== "Grand Total" &&
@@ -400,7 +433,7 @@ const TableComponent = ({
                   e.currentTarget.style.setProperty(
                     "background-color",
                     state.name === "Grand Total"
-                      ? "#000000" // Maintain black on mouse leave
+                      ? "#000000" 
                       : getLighterColor(getStateColor(state).bg, 0)
                   )
                 }
@@ -421,7 +454,7 @@ const TableComponent = ({
                 <td 
                   className={`py-2 px-4 border-b ${
                     state.name.toLowerCase().includes("delhi") ? 
-                    "cursor-pointer transition-colors" : ""
+                    "cursor-pointer transition-colors " : ""
                   }`} 
                   onClick={(e) => 
                     state.name.toLowerCase().includes("delhi") ? 
@@ -431,7 +464,14 @@ const TableComponent = ({
                     "Click to view Delhi regional breakdown" : undefined}
                   data-column="openingStock"
                 >
-                  {state.openingStock}
+                  {state.name.toLowerCase().includes("delhi") ? (
+                    <div className="flex items-center">
+                      <span className="font-medium">{state.openingStock}</span>
+                      
+                    </div>
+                  ) : (
+                    state.openingStock
+                  )}
                 </td>
                 <td className="py-2 px-4 border-b">{state.applicationLogin}</td>
                 <td className="py-2 px-4 border-b">{state.sanctionCount}</td>
