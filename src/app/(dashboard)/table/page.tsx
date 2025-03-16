@@ -15,14 +15,13 @@ interface LoanApplication {
   "Application Number": string;
   "Application Received Date": string;
   "Last Login Acceptance Date": string;
-  "SCHEME": string;
+  SCHEME: string;
   "Loan Purpose": string;
   "Sanctioned Amount": string;
   "User Sanction Date": string;
   "First Disbursal Date": string;
   "Sourcing RM Name": string;
 }
-
 
 interface ULBRange {
   id: string;
@@ -51,7 +50,12 @@ const ULB_RANGES: ULBRange[] = [
   { id: "range4", name: "₹20 Lakhs+", min: 2000001, max: Infinity },
 ];
 
-const FilterDropdown = ({ label, value, options, onChange }: FilterDropdownProps) => (
+const FilterDropdown = ({
+  label,
+  value,
+  options,
+  onChange,
+}: FilterDropdownProps) => (
   <select
     value={value}
     onChange={onChange}
@@ -102,7 +106,9 @@ export default function TablePage() {
   const [selectedBranch, setSelectedBranch] = useState("");
   const [selectedULBRange, setSelectedULBRange] = useState("");
   const [expandedStates, setExpandedStates] = useState<Set<string>>(new Set());
-  const [expandedRegions, setExpandedRegions] = useState<Set<string>>(new Set());
+  const [expandedRegions, setExpandedRegions] = useState<Set<string>>(
+    new Set()
+  );
 
   // Load CSV data
   useEffect(() => {
@@ -111,16 +117,19 @@ export default function TablePage() {
         const response = await fetch("/status.csv");
         const text = await response.text();
         const [headerLine, ...dataLines] = text.split("\n");
-        const headers = headerLine.split(",").map(h => h.trim());
+        const headers = headerLine.split(",").map((h) => h.trim());
 
         const parsedData = dataLines
-          .filter(line => line.trim())
-          .map(line => {
+          .filter((line) => line.trim())
+          .map((line) => {
             const values = line.split(",");
-            return headers.reduce((obj, header, index) => ({
-              ...obj,
-              [header]: values[index]?.trim() || ""
-            }), {} as LoanApplication);
+            return headers.reduce(
+              (obj, header, index) => ({
+                ...obj,
+                [header]: values[index]?.trim() || "",
+              }),
+              {} as LoanApplication
+            );
           });
 
         setCsvData(parsedData);
@@ -138,7 +147,7 @@ export default function TablePage() {
   // Auto-expand when selecting branch
   useEffect(() => {
     if (selectedBranch) {
-      const branch = allBranches.find(b => b.id === selectedBranch);
+      const branch = allBranches.find((b) => b.id === selectedBranch);
       if (branch) {
         setExpandedStates(new Set([branch.stateId]));
         setExpandedRegions(new Set([branch.regionId]));
@@ -147,17 +156,18 @@ export default function TablePage() {
   }, [selectedBranch]);
 
   // Get all branches
-  const allBranches = useMemo(() => 
-    tableData.tableData.flatMap(state =>
-      state.regions.flatMap(region =>
-        region.branches.map(branch => ({
-          id: branch.id,
-          name: branch.name,
-          regionId: region.id,
-          stateId: state.id,
-        }))
-      )
-    ),
+  const allBranches = useMemo(
+    () =>
+      tableData.tableData.flatMap((state) =>
+        state.regions.flatMap((region) =>
+          region.branches.map((branch) => ({
+            id: branch.id,
+            name: branch.name,
+            regionId: region.id,
+            stateId: state.id,
+          }))
+        )
+      ),
     []
   );
 
@@ -166,13 +176,17 @@ export default function TablePage() {
     if (!csvData.length) return [];
 
     const stateFilter = selectedState.replace(/Regional Office/g, "").trim();
-    const activeRange = ULB_RANGES.find(r => r.id === selectedULBRange);
+    const activeRange = ULB_RANGES.find((r) => r.id === selectedULBRange);
 
-    return csvData.filter(item => {
+    return csvData.filter((item) => {
       const amount = Number(item["Loan Amount Requested"]);
-      const branchMatch = selectedBranch ? item["Branch Name"] === selectedBranch : true;
-      const rangeMatch = activeRange ? amount >= activeRange.min && amount <= activeRange.max : true;
-      
+      const branchMatch = selectedBranch
+        ? item["Branch Name"] === selectedBranch
+        : true;
+      const rangeMatch = activeRange
+        ? amount >= activeRange.min && amount <= activeRange.max
+        : true;
+
       return (
         (!selectedState || item.State.includes(stateFilter)) &&
         (!selectedRegion || item["Branch Name"].includes(selectedRegion)) &&
@@ -180,7 +194,13 @@ export default function TablePage() {
         rangeMatch
       );
     });
-  }, [csvData, selectedState, selectedRegion, selectedBranch, selectedULBRange]);
+  }, [
+    csvData,
+    selectedState,
+    selectedRegion,
+    selectedBranch,
+    selectedULBRange,
+  ]);
 
   // Filter table data for branch selection
   const filteredTableData = useMemo(() => {
@@ -188,27 +208,31 @@ export default function TablePage() {
 
     return {
       tableData: tableData.tableData
-        .map(state => ({
+        .map((state) => ({
           ...state,
           regions: state.regions
-            .map(region => ({
+            .map((region) => ({
               ...region,
-              branches: region.branches.filter(branch => branch.id === selectedBranch)
+              branches: region.branches.filter(
+                (branch) => branch.id === selectedBranch
+              ),
             }))
-            .filter(region => region.branches.length > 0)
+            .filter((region) => region.branches.length > 0),
         }))
-        .filter(state => state.regions.length > 0)
+        .filter((state) => state.regions.length > 0),
     };
   }, [selectedBranch]);
 
   // Status breakdown
-  const statusBreakdown = useMemo(() => 
-    filteredLoanData.reduce((acc, item) => {
-      const status = item["Application Status"];
-      acc[status] = [...(acc[status] || []), item];
-      return acc;
-    }, {} as Record<string, LoanApplication[]>),
-  [filteredLoanData]);
+  const statusBreakdown = useMemo(
+    () =>
+      filteredLoanData.reduce((acc, item) => {
+        const status = item["Application Status"];
+        acc[status] = [...(acc[status] || []), item];
+        return acc;
+      }, {} as Record<string, LoanApplication[]>),
+    [filteredLoanData]
+  );
 
   // Clear filters
   const handleClearFilters = () => {
@@ -220,8 +244,12 @@ export default function TablePage() {
     setExpandedRegions(new Set());
   };
 
-  const isFilterApplied = [selectedState, selectedRegion, selectedBranch, selectedULBRange]
-    .some(value => Boolean(value));
+  const isFilterApplied = [
+    selectedState,
+    selectedRegion,
+    selectedBranch,
+    selectedULBRange,
+  ].some((value) => Boolean(value));
 
   return (
     <div className="container mx-auto p-6">
@@ -232,23 +260,37 @@ export default function TablePage() {
         <FilterDropdown
           label="Select State"
           value={selectedState}
-          options={tableData.tableData.map(s => ({ id: s.id, name: s.name }))}
-          onChange={(e) => setSelectedState(e.target.value)}
+          options={tableData.tableData.map((s) => ({ id: s.id, name: s.name }))}
+          onChange={(e) => {
+            setSelectedState(e.target.value);
+            setSelectedRegion(""); // Clear region when state changes
+            setSelectedBranch(""); // Clear branch when state changes
+          }}
+          
         />
 
         <FilterDropdown
           label="Select Region"
           value={selectedRegion}
-          options={tableData.tableData.flatMap(s => 
-            s.regions.map(r => ({ id: r.id, name: r.name }))
-          )}
-          onChange={(e) => setSelectedRegion(e.target.value)}
+          options={tableData.tableData
+            .filter((s) => !selectedState || s.id === selectedState)
+            .flatMap((s) => s.regions.map((r) => ({ id: r.id, name: r.name })))}
+          onChange={(e) => {
+            setSelectedRegion(e.target.value);
+            setSelectedBranch(""); // Clear branch when region changes
+          }}
         />
 
         <FilterDropdown
           label="Select Branch"
           value={selectedBranch}
-          options={allBranches.map(b => ({ id: b.id, name: b.name }))}
+          options={tableData.tableData.flatMap((s) =>
+            s.regions
+              .filter((r) => !selectedRegion || r.id === selectedRegion)
+              .flatMap((r) =>
+                r.branches.map((b) => ({ id: b.id, name: b.name }))
+              )
+          )}
           onChange={(e) => setSelectedBranch(e.target.value)}
         />
 
@@ -263,11 +305,11 @@ export default function TablePage() {
           <button
             onClick={handleClearFilters}
             className="bg-red-100 text-red-600 font-medium px-4 py-2 rounded hover:bg-red-200"
-          > 
-            Clear Filters 
-          </button> 
-        )} 
-      </div> 
+          >
+            Clear Filters
+          </button>
+        )}
+      </div>
 
       {/* Data Display */}
       {isLoading ? (
@@ -296,7 +338,7 @@ export default function TablePage() {
               setExpandedStates={setExpandedStates}
               expandedRegions={expandedRegions}
               setExpandedRegions={setExpandedRegions}
-              csvData={filteredLoanData} 
+              csvData={filteredLoanData}
             />
           </div>
         </>
@@ -304,4 +346,3 @@ export default function TablePage() {
     </div>
   );
 }
-
