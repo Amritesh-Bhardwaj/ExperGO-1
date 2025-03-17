@@ -361,10 +361,22 @@ export default function TablePage() {
           options={tableData.tableData
             .filter((s) => !selectedState || s.id === selectedState)
             .flatMap((s) => s.regions.map((r) => ({ id: r.id, name: r.name })))}
-          onChange={(e) => {
-            setSelectedRegion(e.target.value);
-            setSelectedBranch(""); // Clear branch when region changes
-          }}
+            onChange={(e) => {
+              const regionId = e.target.value;
+              setSelectedRegion(regionId);
+              if(regionId) {
+                // Find which state this region belongs to
+                const stateWithRegion = tableData.tableData.find(state => 
+                  state.regions.some(r => r.id === regionId)
+                );
+                
+                if (stateWithRegion) {
+                  setSelectedState(stateWithRegion.id);
+                }
+              }
+              setSelectedBranch("");
+            }}
+            
         />
 
         <FilterDropdown
@@ -380,7 +392,19 @@ export default function TablePage() {
                 )
             )}
           
-          onChange={(e) => setSelectedBranch(e.target.value)}
+            onChange={(e) => {
+              const branchId = e.target.value;
+              setSelectedBranch(branchId);
+              
+              // Auto-update the state and region filters
+              if (branchId) {
+                const branch = allBranches.find(b => b.id === branchId);
+                if (branch) {
+                  setSelectedState(branch.stateId);
+                  setSelectedRegion(branch.regionId);
+                }
+              }
+            }}
         />
 
         <FilterDropdown

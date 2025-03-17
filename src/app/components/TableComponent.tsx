@@ -179,7 +179,7 @@ const DelhiSubpartsPopup = ({
             <X className="h-6 w-6" />
           </button>
         </div>
-
+        
         {/* View details as a separate section */}
         {selectedApplication && (
           <div className="mb-4 p-4 bg-blue-50 rounded-lg">
@@ -270,7 +270,7 @@ const DelhiSubpartsPopup = ({
             </table>
           </div>
         )}
-
+        
         <div className="p-4">
           <div className="overflow-y-auto max-h-[70vh] rounded-lg shadow-sm border border-gray-200">
             <table className="min-w-full divide-y divide-gray-200">
@@ -429,12 +429,10 @@ const TableComponent = ({
   setExpandedRegions,
   csvData,
 }: TableComponentProps) => {
-  // Add state for Delhi popup
+
   const [showDelhiPopup, setShowDelhiPopup] = useState(false);
-  // Add state to track visibility of workflow columns
   const [showWorkflowColumns, setShowWorkflowColumns] = useState(false);
 
-  // Add this inside the TableComponent function
   const countFilteredApplications = (
     name: string,
     type: "state" | "region" | "branch"
@@ -443,19 +441,18 @@ const TableComponent = ({
 
     return csvData.filter((item) => {
       if (type === "state") {
-        // Count applications where the State matches (case-insensitive)
         return item.State.toLowerCase().includes(name.toLowerCase());
-      } else if (type === "region") {
-        // Count applications where the Branch Name includes the region name
+      } 
+      else if (type === "region") {
         return item["Branch Name"].toLowerCase().includes(name.toLowerCase());
-      } else if (type === "branch") {
-        // Count applications where the Branch Name exactly matches the branch
+      } 
+      else if (type === "branch") {
         return item["Branch Name"].toLowerCase() === name.toLowerCase();
       }
       return false;
     }).length;
   };
-
+  console.log("Data > ", data.tableData);
   // Find Delhi state and extract its data
   const delhiState = data.tableData.find(
     (state) =>
@@ -554,7 +551,7 @@ const TableComponent = ({
     },
     Uttarakhand: {
       bg: "rgba(180, 140, 100, 0.6)",
-    hover: "rgba(180, 140, 100, 0.7)",
+      hover: "rgba(180, 140, 100, 0.7)",
     },
   };
 
@@ -590,24 +587,23 @@ const TableComponent = ({
       <table className="min-w-full bg-white border border-gray-300">
         <thead>
           <tr className="bg-gray-200 text-center">
-            <th className="py-2 px-4 border-b">State/Branch</th>
+            <th className="py-2 px-4 border-b">Branch Name</th>
             <th className="py-2 px-4 border-b">Opening Stock</th>
             <th className="py-2 px-4 border-b">Application Login</th>
             <th className="py-2 px-4 border-b">Sanction Count</th>
-            <th className="py-2 px-4 border-b">Sanction Amt (Cr)</th>
+            <th className="py-2 px-4 border-b">Sanction Amt (in Cr)</th>
             <th className="py-2 px-4 border-b">PNI Sanction Count</th>
+            <th className="py-2 px-4 border-b">PNI Sanction Amount (in Cr)</th>
+            <th className="py-2 px-4 border-b">Fresh Disb Count</th>
+            <th className="py-2 px-4 border-b">Fresh Disb Amt (in Cr.)</th>
+            <th className="py-2 px-4 border-b">Total Disb Amt (in Cr)</th>
+            <th className="py-2 px-4 border-b">DI Amt (in Cr)</th>
             <th className="py-2 px-4 border-b">Rejection</th>
             <th className="py-2 px-4 border-b">Cancellation</th>
             <th className="py-2 px-4 border-b">FTR%</th>
-            <th
-              className="py-2 px-4 border-b cursor-pointer hover:bg-gray-300 relative"
-              onClick={toggleWorkflowColumns}
-              title={
-                showWorkflowColumns
-                  ? "Click to hide workflow details"
-                  : "Click to show workflow details"
-              }
-            >
+            <th className="py-2 px-4 border-b cursor-pointer hover:bg-gray-300 relative"
+                onClick={toggleWorkflowColumns}
+                title={showWorkflowColumns ? "Click to hide workflow details" : "Click to show workflow details"}>
               WIP
               <span className="ml-1 text-blue-600">
                 {showWorkflowColumns ? "▼" : "▶"}
@@ -615,23 +611,16 @@ const TableComponent = ({
             </th>
             {showWorkflowColumns && (
               <>
-                <th className="py-2 px-4 border-b bg-blue-50">
-                  Pending for allocation by CPA
-                </th>
+                <th className="py-2 px-4 border-b bg-blue-50">Pending for allocation by CPA</th>
                 <th className="py-2 px-4 border-b bg-blue-50">WIP-CPA</th>
-                <th className="py-2 px-4 border-b bg-blue-50">
-                  Sales Tray (Login Acceptance)
-                </th>
-                <th className="py-2 px-4 border-b bg-blue-50">
-                  Credit Pending (DDE & Reco Stage)
-                </th>
-                <th className="py-2 px-4 border-b bg-blue-50">
-                  Sales Tray (DDE & RECO)
-                </th>
+                <th className="py-2 px-4 border-b bg-blue-50">Sales Tray (Login Acceptance)</th>
+                <th className="py-2 px-4 border-b bg-blue-50">Credit Pending (DDE & Reco Stage)</th>
+                <th className="py-2 px-4 border-b bg-blue-50">Sales Tray (DDE & RECO)</th>
               </>
             )}
           </tr>
         </thead>
+        
         <tbody>
           {data.tableData.map((state) => (
             <React.Fragment key={state.id}>
@@ -693,18 +682,17 @@ const TableComponent = ({
                   }
                   data-column="openingStock"
                 >
-                  {state.name.toLowerCase().includes("delhi")
-                    ? csvData.filter((item) =>
-                        item.State.toLowerCase().includes("delhi")
-                      ).length
-                    : state.openingStock}
+                  {countFilteredApplications(state.name, "state")}
                 </td>
                 <td className="py-2 px-4 border-b">{state.applicationLogin}</td>
                 <td className="py-2 px-4 border-b">{state.sanctionCount}</td>
-                <td className="py-2 px-4 border-b">
-                  {state.sanctionAmt.toFixed(2)}
-                </td>
+                <td className="py-2 px-4 border-b">{state.sanctionAmt.toFixed(2)}</td>
                 <td className="py-2 px-4 border-b">{state.pniSanctionCount}</td>
+                <td className="py-2 px-4 border-b">{state.pniSanctionAmount?.toFixed(2) || "0.00"}</td>
+                <td className="py-2 px-4 border-b">{state.freshDisbCount || 0}</td>
+                <td className="py-2 px-4 border-b">{state.freshDisbAmt?.toFixed(2) || "0.00"}</td>
+                <td className="py-2 px-4 border-b">{state.totalDisbAmt?.toFixed(2) || "0.00"}</td>
+                <td className="py-2 px-4 border-b">{state.diAmt?.toFixed(2) || "0.00"}</td>
                 <td className="py-2 px-4 border-b">{state.rejection}</td>
                 <td className="py-2 px-4 border-b">{state.cancellation}</td>
                 <td className="py-2 px-4 border-b">{state.ftr}</td>
@@ -728,7 +716,7 @@ const TableComponent = ({
                   </>
                 )}
               </tr>
-              {expandedStates.has(state.id) &&
+              {expandedStates.has(state.id) && 
                 state.regions.map((region) => (
                   <React.Fragment key={region.id}>
                     <tr
@@ -771,18 +759,15 @@ const TableComponent = ({
                       <td className="py-2 px-4 border-b">
                         {countFilteredApplications(region.name, "region")}
                       </td>
-                      <td className="py-2 px-4 border-b">
-                        {region.applicationLogin}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        {region.sanctionCount}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        {region.sanctionAmt.toFixed(2)}
-                      </td>
-                      <td className="py-2 px-4 border-b">
-                        {region.pniSanctionCount}
-                      </td>
+                      <td className="py-2 px-4 border-b">{region.applicationLogin}</td>
+                      <td className="py-2 px-4 border-b">{region.sanctionCount}</td>
+                      <td className="py-2 px-4 border-b">{region.sanctionAmt.toFixed(2)}</td>
+                      <td className="py-2 px-4 border-b">{region.pniSanctionCount}</td>
+                      <td className="py-2 px-4 border-b">{region.pniSanctionAmount?.toFixed(2) || "0.00"}</td>
+                      <td className="py-2 px-4 border-b">{region.freshDisbCount || 0}</td>
+                      <td className="py-2 px-4 border-b">{region.freshDisbAmt?.toFixed(2) || "0.00"}</td>
+                      <td className="py-2 px-4 border-b">{region.totalDisbAmt?.toFixed(2) || "0.00"}</td>
+                      <td className="py-2 px-4 border-b">{region.diAmt?.toFixed(2) || "0.00"}</td>
                       <td className="py-2 px-4 border-b">{region.rejection}</td>
                       <td className="py-2 px-4 border-b">
                         {region.cancellation}
@@ -842,30 +827,19 @@ const TableComponent = ({
                             )
                           }
                         >
-                          <td className="py-2 px-4 border-b pl-16">
-                            {branch.name}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            {countFilteredApplications(branch.name, "branch")}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            {branch.applicationLogin}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            {branch.sanctionCount}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            {branch.sanctionAmt.toFixed(2)}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            {branch.pniSanctionCount}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            {branch.rejection}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            {branch.cancellation}
-                          </td>
+                          <td className="py-2 px-4 border-b pl-16">{branch.name}</td>
+                          <td className="py-2 px-4 border-b">{countFilteredApplications(branch.name, "branch")}</td>
+                          <td className="py-2 px-4 border-b">{branch.applicationLogin}</td>
+                          <td className="py-2 px-4 border-b">{branch.sanctionCount}</td>
+                          <td className="py-2 px-4 border-b">{branch.sanctionAmt.toFixed(2)}</td>
+                          <td className="py-2 px-4 border-b">{branch.pniSanctionCount}</td>
+                          <td className="py-2 px-4 border-b">{branch.pniSanctionAmount?.toFixed(2) || "0.00"}</td>
+                          <td className="py-2 px-4 border-b">{branch.freshDisbCount || 0}</td>
+                          <td className="py-2 px-4 border-b">{branch.freshDisbAmt?.toFixed(2) || "0.00"}</td>
+                          <td className="py-2 px-4 border-b">{branch.totalDisbAmt?.toFixed(2) || "0.00"}</td>
+                          <td className="py-2 px-4 border-b">{branch.diAmt?.toFixed(2) || "0.00"}</td>
+                          <td className="py-2 px-4 border-b">{branch.rejection}</td>
+                          <td className="py-2 px-4 border-b">{branch.cancellation}</td>
                           <td className="py-2 px-4 border-b">{branch.ftr}</td>
                           <td className="py-2 px-4 border-b">{branch.wip}</td>
                           {/* Conditionally render workflow columns for branches */}
