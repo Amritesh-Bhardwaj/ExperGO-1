@@ -247,19 +247,22 @@ export default function TablePage() {
   // Filter loan data
   const filteredLoanData = useMemo(() => {
     if (!csvData.length) return [];
-
+  
     const stateFilter = selectedState.replace(/Regional Office/g, "").trim();
     const activeRange = ULB_RANGES.find((r) => r.id === selectedULBRange);
-
+  
     return csvData.filter((item) => {
+      const isDelhiEntry = item.State.toLowerCase().includes("delhi");
       const amount = Number(item["Loan Amount Requested"]);
       const branchMatch = selectedBranch
         ? item["Branch Name"] === selectedBranch
         : true;
-      const rangeMatch = activeRange
-        ? amount >= activeRange.min && amount <= activeRange.max
-        : true;
-
+      
+      // Only apply ULB range filter to Delhi entries
+      const rangeMatch = !selectedULBRange || 
+        !isDelhiEntry || 
+        (activeRange && amount >= activeRange.min && amount <= activeRange.max);
+  
       return (
         (!selectedState || item.State.includes(stateFilter)) &&
         (!selectedRegion || item["Branch Name"].includes(selectedRegion)) &&
@@ -274,6 +277,7 @@ export default function TablePage() {
     selectedBranch,
     selectedULBRange,
   ]);
+  
 
   // Filter table data for branch selection
   const filteredTableData = useMemo(() => {

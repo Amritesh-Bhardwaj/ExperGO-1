@@ -179,7 +179,7 @@ const DelhiSubpartsPopup = ({
             <X className="h-6 w-6" />
           </button>
         </div>
-        
+
         {/* View details as a separate section */}
         {selectedApplication && (
           <div className="mb-4 p-4 bg-blue-50 rounded-lg">
@@ -270,7 +270,7 @@ const DelhiSubpartsPopup = ({
             </table>
           </div>
         )}
-        
+
         <div className="p-4">
           <div className="overflow-y-auto max-h-[70vh] rounded-lg shadow-sm border border-gray-200">
             <table className="min-w-full divide-y divide-gray-200">
@@ -429,7 +429,6 @@ const TableComponent = ({
   setExpandedRegions,
   csvData,
 }: TableComponentProps) => {
-
   const [showDelhiPopup, setShowDelhiPopup] = useState(false);
   const [showWorkflowColumns, setShowWorkflowColumns] = useState(false);
 
@@ -437,23 +436,50 @@ const TableComponent = ({
     name: string,
     type: "state" | "region" | "branch"
   ) => {
-    if (!csvData.length) return 0;
-
-    return csvData.filter((item) => {
-      if (type === "state") {
-        return item.State.toLowerCase().includes(name.toLowerCase());
-      } 
-      else if (type === "region") {
-        return item["Branch Name"].toLowerCase().includes(name.toLowerCase());
-      } 
-      else if (type === "branch") {
-        return item["Branch Name"].toLowerCase() === name.toLowerCase();
+    // For Delhi entities, count from CSV data
+    if (name.toLowerCase().includes("delhi")) {
+      if (!csvData.length) return 0;
+      
+      return csvData.filter((item) => {
+        if (type === "state") {
+          return item.State.toLowerCase().includes("delhi");
+        } else if (type === "region") {
+          return item["Branch Name"].toLowerCase().includes(name.toLowerCase());
+        } else if (type === "branch") {
+          return item["Branch Name"].toLowerCase() === name.toLowerCase();
+        }
+        return false;
+      }).length;
+    }
+    
+    // For non-Delhi entities, use static values from tableData
+    if (type === "state") {
+      const stateData = data.tableData.find(
+        (s) => s.name.toLowerCase() === name.toLowerCase()
+      );
+      return stateData ? stateData.openingStock : 0;
+    } else if (type === "region") {
+      for (const state of data.tableData) {
+        const region = state.regions.find(
+          (r) => r.name.toLowerCase() === name.toLowerCase()
+        );
+        if (region) return region.openingStock;
       }
-      return false;
-    }).length;
+    } else if (type === "branch") {
+      for (const state of data.tableData) {
+        for (const region of state.regions) {
+          const branch = region.branches.find(
+            (b) => b.name.toLowerCase() === name.toLowerCase()
+          );
+          if (branch) return branch.openingStock;
+        }
+      }
+    }
+    
+    return 0;
   };
+  
   console.log("Data > ", data.tableData);
-  // Find Delhi state and extract its data
   const delhiState = data.tableData.find(
     (state) =>
       state.name.toLowerCase().includes("delhi") ||
@@ -509,7 +535,7 @@ const TableComponent = ({
     [setExpandedRegions]
   );
 
-  // Toggle function for workflow columns
+  // Toggle function for collapsing rows
   const toggleWorkflowColumns = () => {
     setShowWorkflowColumns(!showWorkflowColumns);
   };
@@ -601,9 +627,15 @@ const TableComponent = ({
             <th className="py-2 px-4 border-b">Rejection</th>
             <th className="py-2 px-4 border-b">Cancellation</th>
             <th className="py-2 px-4 border-b">FTR%</th>
-            <th className="py-2 px-4 border-b cursor-pointer hover:bg-gray-300 relative"
-                onClick={toggleWorkflowColumns}
-                title={showWorkflowColumns ? "Click to hide workflow details" : "Click to show workflow details"}>
+            <th
+              className="py-2 px-4 border-b cursor-pointer hover:bg-gray-300 relative"
+              onClick={toggleWorkflowColumns}
+              title={
+                showWorkflowColumns
+                  ? "Click to hide workflow details"
+                  : "Click to show workflow details"
+              }
+            >
               WIP
               <span className="ml-1 text-blue-600">
                 {showWorkflowColumns ? "▼" : "▶"}
@@ -611,16 +643,24 @@ const TableComponent = ({
             </th>
             {showWorkflowColumns && (
               <>
-                <th className="py-2 px-4 border-b bg-blue-50">Pending for allocation by CPA</th>
+                <th className="py-2 px-4 border-b bg-blue-50">
+                  Pending for allocation by CPA
+                </th>
                 <th className="py-2 px-4 border-b bg-blue-50">WIP-CPA</th>
-                <th className="py-2 px-4 border-b bg-blue-50">Sales Tray (Login Acceptance)</th>
-                <th className="py-2 px-4 border-b bg-blue-50">Credit Pending (DDE & Reco Stage)</th>
-                <th className="py-2 px-4 border-b bg-blue-50">Sales Tray (DDE & RECO)</th>
+                <th className="py-2 px-4 border-b bg-blue-50">
+                  Sales Tray (Login Acceptance)
+                </th>
+                <th className="py-2 px-4 border-b bg-blue-50">
+                  Credit Pending (DDE & Reco Stage)
+                </th>
+                <th className="py-2 px-4 border-b bg-blue-50">
+                  Sales Tray (DDE & RECO)
+                </th>
               </>
             )}
           </tr>
         </thead>
-        
+
         <tbody>
           {data.tableData.map((state) => (
             <React.Fragment key={state.id}>
@@ -686,13 +726,25 @@ const TableComponent = ({
                 </td>
                 <td className="py-2 px-4 border-b">{state.applicationLogin}</td>
                 <td className="py-2 px-4 border-b">{state.sanctionCount}</td>
-                <td className="py-2 px-4 border-b">{state.sanctionAmt.toFixed(2)}</td>
+                <td className="py-2 px-4 border-b">
+                  {state.sanctionAmt.toFixed(2)}
+                </td>
                 <td className="py-2 px-4 border-b">{state.pniSanctionCount}</td>
-                <td className="py-2 px-4 border-b">{state.pniSanctionAmount?.toFixed(2) || "0.00"}</td>
-                <td className="py-2 px-4 border-b">{state.freshDisbCount || 0}</td>
-                <td className="py-2 px-4 border-b">{state.freshDisbAmt?.toFixed(2) || "0.00"}</td>
-                <td className="py-2 px-4 border-b">{state.totalDisbAmt?.toFixed(2) || "0.00"}</td>
-                <td className="py-2 px-4 border-b">{state.diAmt?.toFixed(2) || "0.00"}</td>
+                <td className="py-2 px-4 border-b">
+                  {state.pniSanctionAmount?.toFixed(2) || "0.00"}
+                </td>
+                <td className="py-2 px-4 border-b">
+                  {state.freshDisbCount || 0}
+                </td>
+                <td className="py-2 px-4 border-b">
+                  {state.freshDisbAmt?.toFixed(2) || "0.00"}
+                </td>
+                <td className="py-2 px-4 border-b">
+                  {state.totalDisbAmt?.toFixed(2) || "0.00"}
+                </td>
+                <td className="py-2 px-4 border-b">
+                  {state.diAmt?.toFixed(2) || "0.00"}
+                </td>
                 <td className="py-2 px-4 border-b">{state.rejection}</td>
                 <td className="py-2 px-4 border-b">{state.cancellation}</td>
                 <td className="py-2 px-4 border-b">{state.ftr}</td>
@@ -716,7 +768,7 @@ const TableComponent = ({
                   </>
                 )}
               </tr>
-              {expandedStates.has(state.id) && 
+              {expandedStates.has(state.id) &&
                 state.regions.map((region) => (
                   <React.Fragment key={region.id}>
                     <tr
@@ -759,15 +811,33 @@ const TableComponent = ({
                       <td className="py-2 px-4 border-b">
                         {countFilteredApplications(region.name, "region")}
                       </td>
-                      <td className="py-2 px-4 border-b">{region.applicationLogin}</td>
-                      <td className="py-2 px-4 border-b">{region.sanctionCount}</td>
-                      <td className="py-2 px-4 border-b">{region.sanctionAmt.toFixed(2)}</td>
-                      <td className="py-2 px-4 border-b">{region.pniSanctionCount}</td>
-                      <td className="py-2 px-4 border-b">{region.pniSanctionAmount?.toFixed(2) || "0.00"}</td>
-                      <td className="py-2 px-4 border-b">{region.freshDisbCount || 0}</td>
-                      <td className="py-2 px-4 border-b">{region.freshDisbAmt?.toFixed(2) || "0.00"}</td>
-                      <td className="py-2 px-4 border-b">{region.totalDisbAmt?.toFixed(2) || "0.00"}</td>
-                      <td className="py-2 px-4 border-b">{region.diAmt?.toFixed(2) || "0.00"}</td>
+                      <td className="py-2 px-4 border-b">
+                        {region.applicationLogin}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.sanctionCount}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.sanctionAmt.toFixed(2)}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.pniSanctionCount}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.pniSanctionAmount?.toFixed(2) || "0.00"}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.freshDisbCount || 0}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.freshDisbAmt?.toFixed(2) || "0.00"}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.totalDisbAmt?.toFixed(2) || "0.00"}
+                      </td>
+                      <td className="py-2 px-4 border-b">
+                        {region.diAmt?.toFixed(2) || "0.00"}
+                      </td>
                       <td className="py-2 px-4 border-b">{region.rejection}</td>
                       <td className="py-2 px-4 border-b">
                         {region.cancellation}
@@ -827,19 +897,45 @@ const TableComponent = ({
                             )
                           }
                         >
-                          <td className="py-2 px-4 border-b pl-16">{branch.name}</td>
-                          <td className="py-2 px-4 border-b">{countFilteredApplications(branch.name, "branch")}</td>
-                          <td className="py-2 px-4 border-b">{branch.applicationLogin}</td>
-                          <td className="py-2 px-4 border-b">{branch.sanctionCount}</td>
-                          <td className="py-2 px-4 border-b">{branch.sanctionAmt.toFixed(2)}</td>
-                          <td className="py-2 px-4 border-b">{branch.pniSanctionCount}</td>
-                          <td className="py-2 px-4 border-b">{branch.pniSanctionAmount?.toFixed(2) || "0.00"}</td>
-                          <td className="py-2 px-4 border-b">{branch.freshDisbCount || 0}</td>
-                          <td className="py-2 px-4 border-b">{branch.freshDisbAmt?.toFixed(2) || "0.00"}</td>
-                          <td className="py-2 px-4 border-b">{branch.totalDisbAmt?.toFixed(2) || "0.00"}</td>
-                          <td className="py-2 px-4 border-b">{branch.diAmt?.toFixed(2) || "0.00"}</td>
-                          <td className="py-2 px-4 border-b">{branch.rejection}</td>
-                          <td className="py-2 px-4 border-b">{branch.cancellation}</td>
+                          <td className="py-2 px-4 border-b pl-16">
+                            {branch.name}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {countFilteredApplications(branch.name, "branch")}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.applicationLogin}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.sanctionCount}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.sanctionAmt.toFixed(2)}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.pniSanctionCount}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.pniSanctionAmount?.toFixed(2) || "0.00"}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.freshDisbCount || 0}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.freshDisbAmt?.toFixed(2) || "0.00"}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.totalDisbAmt?.toFixed(2) || "0.00"}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.diAmt?.toFixed(2) || "0.00"}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.rejection}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            {branch.cancellation}
+                          </td>
                           <td className="py-2 px-4 border-b">{branch.ftr}</td>
                           <td className="py-2 px-4 border-b">{branch.wip}</td>
                           {/* Conditionally render workflow columns for branches */}
