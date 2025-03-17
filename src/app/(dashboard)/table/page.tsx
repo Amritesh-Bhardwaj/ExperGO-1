@@ -110,8 +110,12 @@ export default function TablePage() {
   const [expandedRegions, setExpandedRegions] = useState<Set<string>>(
     new Set()
   );
-  const [parsedTatData, setParsedTatData] = useState<Record<string, string>[]>([]);
-  const [parsedBookData, setParsedBookData] = useState<Record<string, string>[]>([]);
+  const [parsedTatData, setParsedTatData] = useState<Record<string, string>[]>(
+    []
+  );
+  const [parsedBookData, setParsedBookData] = useState<
+    Record<string, string>[]
+  >([]);
   const [isExpanded, setIsExpanded] = useState(false);
   const handleExpandToggle = () => {
     if (isExpanded) {
@@ -121,9 +125,9 @@ export default function TablePage() {
       setIsExpanded(false);
     } else {
       // Expand all
-      const allStateIds = tableData.tableData.map(state => state.id);
-      const allRegionIds = tableData.tableData.flatMap(state => 
-        state.regions ? state.regions.map(region => region.id) : []
+      const allStateIds = tableData.tableData.map((state) => state.id);
+      const allRegionIds = tableData.tableData.flatMap((state) =>
+        state.regions ? state.regions.map((region) => region.id) : []
       );
       setExpandedStates(new Set(allStateIds));
       setExpandedRegions(new Set(allRegionIds));
@@ -171,7 +175,7 @@ export default function TablePage() {
               {} as Record<string, string>
             );
           });
-          setParsedBookData(parsedBookData);
+        setParsedBookData(parsedBookData);
         // Load TAT-FTR.csv
         const responseTat = await fetch("/TAT-FTR.csv");
         const textTat = await responseTat.text();
@@ -189,7 +193,7 @@ export default function TablePage() {
               {} as Record<string, string>
             );
           });
-          setParsedTatData(parsedTatData);
+        setParsedTatData(parsedTatData);
       } catch (error) {
         console.error("Error loading CSV data:", error);
       } finally {
@@ -210,7 +214,19 @@ export default function TablePage() {
         setExpandedRegions(new Set([branch.regionId]));
       }
     }
-  }, [selectedBranch]);
+    else if(selectedRegion) {
+      // Find which state this region belongs to
+      const stateId = tableData.tableData.find(state => 
+        state.regions.some(r => r.id === selectedRegion)
+      )?.id;
+      
+      if (stateId) {
+        setExpandedStates(new Set([stateId]));
+        setExpandedRegions(new Set([selectedRegion])); // Fixed: use selectedRegion directly
+      }
+    }
+  }, [selectedBranch, selectedRegion]);
+  
 
   // Get all branches
   const allBranches = useMemo(
@@ -261,24 +277,38 @@ export default function TablePage() {
 
   // Filter table data for branch selection
   const filteredTableData = useMemo(() => {
-    if (!selectedBranch) return tableData;
-
-    return {
-      tableData: tableData.tableData
-        .map((state) => ({
+    let filtered = { ...tableData };
+    if (selectedState) {
+      filtered = {
+        ...filtered,
+        tableData: filtered.tableData.filter(state => state.id === selectedState)
+      };
+    }
+    if (selectedRegion) {
+      filtered = {
+        ...filtered,
+        tableData: filtered.tableData.map(state => ({
           ...state,
-          regions: state.regions
-            .map((region) => ({
-              ...region,
-              branches: region.branches.filter(
-                (branch) => branch.id === selectedBranch
-              ),
-            }))
-            .filter((region) => region.branches.length > 0),
-        }))
-        .filter((state) => state.regions.length > 0),
-    };
-  }, [selectedBranch]);
+          regions: state.regions.filter(region => region.id === selectedRegion)
+        })).filter(state => state.regions.length > 0)
+      };
+    }
+    if (selectedBranch) {
+      filtered = {
+        ...filtered,
+        tableData: filtered.tableData.map(state => ({
+          ...state,
+          regions: state.regions.map(region => ({
+            ...region,
+            branches: region.branches.filter(branch => branch.id === selectedBranch)
+          })).filter(region => region.branches.length > 0)
+        })).filter(state => state.regions.length > 0)
+      };
+    }
+    
+    return filtered;
+  }, [selectedState, selectedRegion, selectedBranch]);
+  
 
   // Status breakdown
   const statusBreakdown = useMemo(
@@ -323,7 +353,6 @@ export default function TablePage() {
             setSelectedRegion(""); // Clear region when state changes
             setSelectedBranch(""); // Clear branch when state changes
           }}
-          
         />
 
         <FilterDropdown
@@ -341,13 +370,16 @@ export default function TablePage() {
         <FilterDropdown
           label="Select Branch"
           value={selectedBranch}
-          options={tableData.tableData.flatMap((s) =>
-            s.regions
-              .filter((r) => !selectedRegion || r.id === selectedRegion)
-              .flatMap((r) =>
-                r.branches.map((b) => ({ id: b.id, name: b.name }))
-              )
-          )}
+          options={tableData.tableData
+            .filter((s) => !selectedState || s.id === selectedState) // Filter states first
+            .flatMap((s) =>
+              s.regions
+                .filter((r) => !selectedRegion || r.id === selectedRegion)
+                .flatMap((r) =>
+                  r.branches.map((b) => ({ id: b.id, name: b.name }))
+                )
+            )}
+          
           onChange={(e) => setSelectedBranch(e.target.value)}
         />
 
@@ -358,16 +390,16 @@ export default function TablePage() {
           onChange={(e) => setSelectedULBRange(e.target.value)}
         />
 
-<DataViewButtons 
-        parsedTatData={parsedTatData}
-        parsedBookData={parsedBookData}
-      />
-      <button
-    onClick={handleExpandToggle}
-    className="bg-purple-100 text-purple-600 font-medium px-4 py-2 rounded hover:bg-purple-200 transition-colors"
-  >
-    {isExpanded ? "Collapse All" : "Expand All"}
-  </button>
+        <DataViewButtons
+          parsedTatData={parsedTatData}
+          parsedBookData={parsedBookData}
+        />
+        <button
+          onClick={handleExpandToggle}
+          className="bg-purple-100 text-purple-600 font-medium px-4 py-2 rounded hover:bg-purple-200 transition-colors"
+        >
+          {isExpanded ? "Collapse All" : "Expand All"}
+        </button>
 
         {isFilterApplied && (
           <button
